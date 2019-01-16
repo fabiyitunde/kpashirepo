@@ -3,7 +3,7 @@ var admin = require('firebase-admin');
 var AGASResponseFactory_1 = require("./agasresponses/AGASResponseFactory");
 admin.initializeApp({
     credential: admin.credential.cert("serviceAccountKey.json"),
-    databaseURL: "https://giftler-24670.firebaseio.com"
+    databaseURL: "https://kpashi-2bc65.firebaseio.com/"
 });
 var agasresponse = new AGASResponseFactory_1.AGASResponseFactory();
 agasresponse.processRequest();
