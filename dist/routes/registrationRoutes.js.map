@@ -1,0 +1,1 @@
+{"version":3,"file":"registrationRoutes.js","sourceRoot":"","sources":["../../app/routes/registrationRoutes.ts"],"names":[],"mappings":";;AACA,kFAA+E;AAC/E;IAAA;QACS,2BAAsB,GAA2B,IAAI,+CAAsB,EAAE,CAAC;IAMvF,CAAC;IALQ,MAAM,CAAC,GAAG;QACf,GAAG;aACA,KAAK,CAAC,sBAAsB,CAAC;aAC7B,IAAI,CAAC,IAAI,CAAC,sBAAsB,CAAC,UAAU,CAAC,CAAC;IAClD,CAAC;CACF;AAPD,gDAOC"}
