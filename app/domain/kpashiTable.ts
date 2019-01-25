@@ -9,12 +9,15 @@ export class KpashiTable {
   playerlist: PlayerDetail[] = [];
   gameisOn: boolean;
   currentGameId: string;
+  description: string;
+  createdon: Date;
   create(
     id: string,
     hostplayerid: string,
     hostplayername: string,
     unitperround: number,
-    creditbalance: number
+    creditbalance: number,
+    description: string
   ) {
     if (creditbalance < unitperround) throw "not enough credit to play";
     this.hostplayer.sittingposition = 1;
@@ -22,8 +25,10 @@ export class KpashiTable {
     this.hostplayer.playername = hostplayername;
     this.hostplayer.creditbalance = creditbalance;
     this.id = id;
+    this.description = description;
     this.unitperround = unitperround;
     this.playerlist.push(this.hostplayer);
+    this.createdon = new Date();
   }
   addplayer(playerid: string, fullname: string, creditvalue: number) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);

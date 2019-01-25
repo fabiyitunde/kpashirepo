@@ -16,6 +16,9 @@ export const getKpashiTable = async (tableid: string): Promise<KpashiTable> => {
   hostplayer.playerid = existingrec.hostplayer.playerid;
   hostplayer.playername = existingrec.hostplayer.name;
   returnobj.hostplayer = hostplayer;
+  returnobj.description = existingrec.description;
+  returnobj.currentGameId = existingrec.currentGameId;
+  returnobj.createdon = existingrec.createdon;
   if (existingrec.playerlist) {
     existingrec.playerlist.forEach(playerdetail => {
       var newplayerdetail: PlayerDetail = new PlayerDetail();
@@ -51,6 +54,9 @@ export const saveKpashiTable = async (
   newkpashitable.tableid = kpashitable.id;
   newkpashitable.unitperround = kpashitable.unitperround;
   newkpashitable.gameison = kpashitable.gameisOn;
+  newkpashitable.description = kpashitable.description;
+  newkpashitable.currentGameId = kpashitable.currentGameId;
+  newkpashitable.createdon = kpashitable.createdon;
   newkpashitable.hostplayer = hostplayer;
   newkpashitable.playerlist = playerlist;
   await KpashiTableInfo.findOneAndUpdate(
