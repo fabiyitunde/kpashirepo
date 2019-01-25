@@ -1,13 +1,14 @@
 import { PlayerDetail } from "./playerDetail";
 import { KpashiGame } from "./kpashiGame";
 import * as linq from "linq";
+import { Player } from "./player";
 export class KpashiTable {
   id: string;
   hostplayer: PlayerDetail = new PlayerDetail();
   unitperround: number;
   playerlist: PlayerDetail[] = [];
   gameisOn: boolean;
-
+  currentGameId: string;
   create(
     id: string,
     hostplayerid: string,
@@ -105,5 +106,71 @@ export class KpashiTable {
       this.removeplayer(member.playerid);
     });
     if (listofmemberstoremove.count() == 0) this.setnexttoplay();
+  }
+  pickfirstToPlay() {
+    var noninclusivemaxrange = this.playerlist.length + 1;
+    for (let index = 0; index < 200; index++) {
+      var player1position = Math.random() * (noninclusivemaxrange - 1) + 1;
+      var player2position = Math.random() * (noninclusivemaxrange - 1) + 1;
+      if (player1position == player2position) continue;
+      var player1 = linq
+        .from(this.playerlist)
+        .firstOrDefault(a => a.sittingposition == player1position);
+      var player2 = linq
+        .from(this.playerlist)
+        .firstOrDefault(a => a.sittingposition == player2position);
+      player1.sittingposition = player2position;
+      player2.sittingposition = player1position;
+    }
+  }
+  createKpashiGame(gameid: string): KpashiGame {
+    if (this.gameisOn) throw "An Existing Game is Still InConclusive";
+    if (this.playerlist.length <= 1) throw "Minimum Of Two players Required";
+    var newgame: KpashiGame = new KpashiGame();
+    newgame.initialize(gameid, this.id, this.unitperround);
+    this.gameisOn = true;
+    this.currentGameId = gameid;
+    this.pickfirstToPlay();
+    this.playerlist.forEach(player => {
+      if (player.creditbalance >= this.unitperround) {
+        var newplayer: Player = new Player();
+        newplayer.creditbalance = player.creditbalance;
+        newplayer.playerid = player.playerid;
+        newplayer.playername = player.playername;
+        newplayer.sittingposition = player.sittingposition;
+        newplayer.winposition = 0;
+        newgame.enrollplayer(newplayer);
+      }
+    });
+    if (newgame.playerlist.length < 2) throw "players must be more than 1";
+    return newgame;
+  }
+  createKpashiGameWithPlayerIdOfFirstPlayer(
+    gameid: string,
+    playerid: string
+  ): KpashiGame {
+    if (this.gameisOn) throw "An Existing Game is Still InConclusive";
+    if (this.playerlist.length <= 1) throw "Minimum Of Two players Required";
+    var existingmember = linq
+      .from(this.playerlist)
+      .firstOrDefault(a => a.playerid == playerid);
+    if (existingmember.sittingposition != 1) throw "its not your turn to play";
+    var newgame: KpashiGame = new KpashiGame();
+    this.gameisOn = true;
+    this.currentGameId = gameid;
+
+    this.playerlist.forEach(player => {
+      if (player.creditbalance >= this.unitperround) {
+        var newplayer: Player = new Player();
+        newplayer.creditbalance = player.creditbalance;
+        newplayer.playerid = player.playerid;
+        newplayer.playername = player.playername;
+        newplayer.sittingposition = player.sittingposition;
+        newplayer.winposition = 0;
+        newgame.enrollplayer(newplayer);
+      }
+    });
+    if (newgame.playerlist.length < 2) throw "players must be more than 1";
+    return newgame;
   }
 }

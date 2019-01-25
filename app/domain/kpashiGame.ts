@@ -31,9 +31,7 @@ export class KpashiGame {
     for (let suit in SuitType) {
       const suittype: SuitType = (SuitType[suit] as any) as SuitType;
       for (let index = 0; index < 10; index++) {
-        var newcard = new Card();
-        newcard.suitType = suittype;
-        newcard.cardType = <CardType>(index + 1);
+        var newcard = new Card(<number>suittype, index + 1);
         this.playingcards.push(newcard);
       }
       this.gamestatus = GameStatus.Created;
@@ -67,9 +65,7 @@ export class KpashiGame {
       var suitType = <SuitType>Math.random() * (5 - 1) + 1;
       var pickedpositioninthedeck = Math.random() * (41 - 1) + 1;
       var currentcardinpickedposition = shuffledcards[pickedpositioninthedeck];
-      var pickedcardindeck = new Card();
-      pickedcardindeck.suitType = suitType;
-      pickedcardindeck.cardType = cardtype;
+      var pickedcardindeck = new Card(suitType, cardtype);
       var currentpositionofpickedCard = Number.parseInt(
         Object.keys(shuffledcards).find(key => {
           var position = Number.parseInt(key);
@@ -216,14 +212,12 @@ export class KpashiGame {
   }
   processresults() {
     this.playerlist.forEach(player => {
-      var gameresult = new GameResult();
       var totalscore = linq.from(player.cards).aggregate(0, (acc, card) => {
         var cardvalue =
           card.cardType == CardType.Ace ? 11 : <number>card.cardType;
         return acc + cardvalue;
       });
-      gameresult.player = player;
-      gameresult.score = totalscore;
+      var gameresult = new GameResult(player, totalscore, 0);
       this.gameresults.push(gameresult);
     });
     var scorelist = linq
