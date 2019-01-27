@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
+
 import { initRoutes } from "./routes/index";
 class App {
   public app: express.Application;
@@ -8,6 +9,7 @@ class App {
   constructor() {
     this.app = express();
     this.config();
+
     initRoutes(this.app);
     this.mongoSetup();
     console.log("Last Connect");

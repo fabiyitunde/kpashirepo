@@ -25,6 +25,9 @@ export const KpashiPlayer = mongoose.model(
     registrationDate: {
       type: Date,
       default: Date.now
+    },
+    lastactivitytime: {
+      type: String
     }
   })
 );

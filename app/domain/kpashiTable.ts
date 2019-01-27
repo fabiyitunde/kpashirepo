@@ -150,6 +150,10 @@ export class KpashiTable {
     if (newgame.playerlist.length < 2) throw "players must be more than 1";
     return newgame;
   }
+  playerAlreadyExist(playerid: string): boolean {
+    var existingplayer = this.playerlist.find(a => a.playerid == playerid);
+    return existingplayer != null && existingplayer != undefined;
+  }
   createKpashiGameWithPlayerIdOfFirstPlayer(
     gameid: string,
     playerid: string

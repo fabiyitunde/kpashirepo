@@ -21,7 +21,6 @@ export class createMyTable {
     this.unitperhand = unitperhand;
     this.credittoken = credittoken;
     this.tableid = tableid;
-    this.description = description;
   }
   async process() {
     var newtable: KpashiTable = new KpashiTable();

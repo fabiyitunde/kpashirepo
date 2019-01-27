@@ -4,7 +4,22 @@ export class registrationRoutes {
   public registrationController: RegistrationController = new RegistrationController();
   public routes(app): void {
     app
-      .route("/registration/create")
+      .route("/registration/createuser")
       .post(this.registrationController.createuser);
+    app
+      .route("/registration/createTable")
+      .post(this.registrationController.createTable);
+    app
+      .route("/registration/sendTableInvite")
+      .post(this.registrationController.sendTableInvite);
+    app
+      .route("/registration/joinTable")
+      .post(this.registrationController.joinTable);
+    app
+      .route("/registration/getMyTableList/:tableid")
+      .get(this.registrationController.getMyTableList);
+    app
+      .route("/registration/getAllUsersList")
+      .get(this.registrationController.getAllUsersList);
   }
 }
