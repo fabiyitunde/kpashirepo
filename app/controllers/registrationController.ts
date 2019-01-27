@@ -62,8 +62,8 @@ export class RegistrationController {
   }
   public async getMyTableList(req: Request, res: Response) {
     try {
-      const { tableid } = req.params;
-      const resultlist = await getMyTableList(tableid);
+      const { userid } = req.params;
+      const resultlist = await getMyTableList(userid);
       res.status(200).json(resultlist);
     } catch (error) {
       res.status(400).send(error);
