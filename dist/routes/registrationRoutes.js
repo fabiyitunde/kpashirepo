@@ -7,8 +7,23 @@ class registrationRoutes {
     }
     routes(app) {
         app
-            .route("/registration/create")
+            .route("/registration/createuser")
             .post(this.registrationController.createuser);
+        app
+            .route("/registration/createTable")
+            .post(this.registrationController.createTable);
+        app
+            .route("/registration/sendTableInvite")
+            .post(this.registrationController.sendTableInvite);
+        app
+            .route("/registration/joinTable")
+            .post(this.registrationController.joinTable);
+        app
+            .route("/registration/getMyTableList/:userid")
+            .get(this.registrationController.getMyTableList);
+        app
+            .route("/registration/getAllUsersList")
+            .get(this.registrationController.getAllUsersList);
     }
 }
 exports.registrationRoutes = registrationRoutes;

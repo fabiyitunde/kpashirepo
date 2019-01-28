@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { RegistrationController } from "../controllers/registrationController";
 export class registrationRoutes {
   public registrationController: RegistrationController = new RegistrationController();
-  public routes(app): void {
+  public routes(app) {
     app
       .route("/registration/createuser")
       .post(this.registrationController.createuser);

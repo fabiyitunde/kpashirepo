@@ -1,21 +1,30 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as mongoose from "mongoose";
+import * as cors from "cors";
 
 import { initRoutes } from "./routes/index";
+import { initHandlers } from "./eventhandlers/index";
 class App {
   public app: express.Application;
   public mongoUrl: string = "mongodb://localhost/kpashidatabase";
   constructor() {
     this.app = express();
-    this.config();
+    this.app.use(cors());
 
+    this.config();
     initRoutes(this.app);
+    initHandlers(this.app);
     this.mongoSetup();
+
     console.log("Last Connect");
   }
 
   private config(): void {
+    // this.app.use(function(req, res, next) {
+    //   console.log("Request Details ", req);
+    //   next();
+    // });
     // support application/json type post data
     this.app.use(bodyParser.json());
     //support application/x-www-form-urlencoded post data

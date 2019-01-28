@@ -5,8 +5,8 @@ import {
 import { KpashiTable } from "../../domain/kpashiTable";
 import { validateToken } from "../../utilities/tokenvalidatorprovider";
 import { getUserInfo } from "../../queries/getUserInfo";
-import { getTableInfo } from "queries/getTableInfo";
-import { postalChannels, postalTopics } from "param";
+import { getTableInfo } from "../../queries/getTableInfo";
+import { postalChannels, postalTopics } from "../../param";
 export class joinTable {
   userid: string;
   tableid: string;

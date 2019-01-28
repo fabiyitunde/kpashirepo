@@ -27,7 +27,8 @@ export const KpashiPlayer = mongoose.model(
       default: Date.now
     },
     lastactivitytime: {
-      type: String
+      type: Date,
+      default: Date.now
     }
   })
 );

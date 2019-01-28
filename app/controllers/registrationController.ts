@@ -3,8 +3,8 @@ import { createUser } from "../commands/registration/createUser";
 import { createMyTable } from "../commands/registration/createMyTable";
 import { getMyTableList } from "../queries/getMyTableList";
 import { getAllUsersList } from "../queries/getAllUsersList";
-import { sendTableInvite } from "./../commands/registration/sendTableInvite";
-import { joinTable } from "commands/registration/joinTable";
+import { sendTableInvite } from "../commands/registration/sendTableInvite";
+import { joinTable } from "../commands/registration/joinTable";
 
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
@@ -23,20 +23,26 @@ export class RegistrationController {
         userid,
         tableid,
         description,
-        unitperhand,
+        oneroundunit,
         credittoken
       } = req.body;
       let cmd = new createMyTable(
         userid,
         description,
-        unitperhand,
+        oneroundunit,
         credittoken,
         tableid
       );
       await cmd.process();
       var mytablelist = await getMyTableList(userid);
-      res.status(200).json(mytablelist);
+      var returnobj: any = {
+        mytablelist: mytablelist,
+        success: true,
+        id: tableid
+      };
+      res.status(200).json(returnobj);
     } catch (error) {
+      console.log("error", error);
       res.status(400).send(error);
     }
   }
@@ -64,7 +70,13 @@ export class RegistrationController {
     try {
       const { userid } = req.params;
       const resultlist = await getMyTableList(userid);
-      res.status(200).json(resultlist);
+      const allusers = await getAllUsersList();
+      const returnobj: any = {
+        success: true,
+        mytablelist: resultlist,
+        playerlist: allusers
+      };
+      res.status(200).json(returnobj);
     } catch (error) {
       res.status(400).send(error);
     }

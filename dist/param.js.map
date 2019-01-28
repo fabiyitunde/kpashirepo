@@ -1,0 +1,1 @@
+{"version":3,"file":"param.js","sourceRoot":"","sources":["../app/param.ts"],"names":[],"mappings":";;AAAa,QAAA,cAAc,GAAG;IAC5B,aAAa,EAAE,eAAe;CAC/B,CAAC;AAEW,QAAA,YAAY,GAAG;IAC1B,eAAe,EAAE,iBAAiB;IAClC,yBAAyB,EAAE,2BAA2B;CACvD,CAAC;AAEW,QAAA,0BAA0B,GAAG;IACxC,WAAW,EAAE,aAAa;IAC1B,mBAAmB,EAAE,qBAAqB;CAC3C,CAAC"}

@@ -25,6 +25,10 @@ exports.KpashiPlayer = mongoose.model("KpashiPlayer", new mongoose.Schema({
     registrationDate: {
         type: Date,
         default: Date.now
+    },
+    lastactivitytime: {
+        type: Date,
+        default: Date.now
     }
 }));
 exports.KpashiPlayer = exports.KpashiPlayer;

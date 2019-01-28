@@ -1,1 +1,1 @@
-{"version":3,"file":"gameResult.js","sourceRoot":"","sources":["../../app/domain/gameResult.ts"],"names":[],"mappings":";;AACA;CAIC;AAJD,gCAIC"}
+{"version":3,"file":"gameResult.js","sourceRoot":"","sources":["../../app/domain/gameResult.ts"],"names":[],"mappings":";;AACA,MAAa,UAAU;IAIrB,YAAY,MAAc,EAAE,KAAa,EAAE,QAAgB;QACzD,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QACrB,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;QACnB,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;IAC3B,CAAC;CACF;AATD,gCASC"}

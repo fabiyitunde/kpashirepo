@@ -22,8 +22,12 @@ exports.KpashiTableInfoSchema = new mongoose.Schema({
         type: String,
         required: "Table Id is required"
     },
+    description: { type: String },
     unitperround: {
         type: Number
+    },
+    currentGameId: {
+        type: String
     },
     gameison: {
         type: Boolean
@@ -31,6 +35,7 @@ exports.KpashiTableInfoSchema = new mongoose.Schema({
     hostplayer: {
         type: playerSchema
     },
+    createdon: { type: Date },
     playerlist: {
         type: [playerSchema]
     }
