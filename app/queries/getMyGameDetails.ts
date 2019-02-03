@@ -41,10 +41,13 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
     description: GameStatus[gameinfo.gamestatus]
   };
   var playerDetails: any[] = [];
+  var gameresults: any[] = gameinfo.gameresults;
   for (let index = 0; index < playerlist.length; index++) {
     const player = playerlist[index];
+    const gameresult = gameresults.find(a => a.playerid == player.playerid);
     var playerinfo: any = playerinfolist.find(a => a.id == player.playerid);
-    var gamestatus: string = player.winposition == 1 ? "Winner" : "Loser";
+    var gamestatus: string = "";
+    if (gameresult) gamestatus = gameresult.position == 1 ? "Winner" : "Loser";
     var playerdetail: any = {};
     var dropedcard = droppedcards.find(a => a.playerid == player.playerid);
     playerdetail.id = playerinfo.id;

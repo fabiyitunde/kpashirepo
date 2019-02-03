@@ -12,6 +12,9 @@
     "prod": "npm run build && npm run start",
     "dev:ts": "nodemon"
   },
+  "engines": {
+    "node": "8.9.4"
+  },
   "author": "tunde fabiyi",
   "license": "ISC",
   "dependencies": {

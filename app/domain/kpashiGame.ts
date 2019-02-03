@@ -119,8 +119,10 @@ export class KpashiGame {
       a => a.suitType == suittype && a.cardType == cardtype
     );
     this.setcallcard(existingplayer, callingcard);
-    existingplayer.cards = existingplayer.cards.filter(
-      a => a.cardType !== cardtype && a.suitType !== suittype
+    var cardid = suittype.toString() + cardtype.toString();
+    var playerscards = [...existingplayer.cards];
+    existingplayer.cards = playerscards.filter(
+      a => a.suitType.toString() + a.cardType.toString() != cardid
     );
     this.lastplayerposition = existingplayer.sittingposition;
   }
@@ -143,26 +145,33 @@ export class KpashiGame {
       );
       if (existingcard == undefined) throw "invalid move";
     }
-    this.registerdroppedcard(existingplayer, new Card(suittype, cardtype));
-    existingplayer.cards = existingplayer.cards.filter(
-      a => a.cardType != cardtype && a.suitType != suittype
+    var cardid = suittype.toString() + cardtype.toString();
+    var playerscards = [...existingplayer.cards];
+    existingplayer.cards = playerscards.filter(
+      a => a.suitType.toString() + a.cardType.toString() != cardid
     );
+    this.registerdroppedcard(existingplayer, new Card(suittype, cardtype));
+
     this.lastplayerposition = existingplayer.sittingposition;
     onGameEndCallback(this.droppedcards.length == this.playerlist.length);
   }
   registerdroppedcard(player: any, card: any) {
     this.droppedcards.push([player, card]);
     if (this.firsttopick[1].cardType == CardType.Ace) return;
-    this.droppedcards.forEach(dropedcarddetail => {
-      if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid) return;
-      if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType) return;
+    for (let index = 0; index < this.droppedcards.length; index++) {
+      const dropedcarddetail = this.droppedcards[index];
+      if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
+        continue;
+      if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
+        continue;
       if (dropedcarddetail[1].cardType == CardType.Ace) {
         this.firsttopick = dropedcarddetail;
       } else {
         if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
           this.firsttopick = dropedcarddetail;
       }
-    });
+    }
+
     this.processpicksequence();
     if (this.droppedcards.length == this.playerlist.length) {
       this.gamestatus = GameStatus.Finished;

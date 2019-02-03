@@ -48,10 +48,14 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         description: gamestatus_1.GameStatus[gameinfo.gamestatus]
     };
     var playerDetails = [];
+    var gameresults = gameinfo.gameresults;
     for (let index = 0; index < playerlist.length; index++) {
         const player = playerlist[index];
+        const gameresult = gameresults.find(a => a.playerid == player.playerid);
         var playerinfo = playerinfolist.find(a => a.id == player.playerid);
-        var gamestatus = player.winposition == 1 ? "Winner" : "Loser";
+        var gamestatus = "";
+        if (gameresult)
+            gamestatus = gameresult.position == 1 ? "Winner" : "Loser";
         var playerdetail = {};
         var dropedcard = droppedcards.find(a => a.playerid == player.playerid);
         playerdetail.id = playerinfo.id;

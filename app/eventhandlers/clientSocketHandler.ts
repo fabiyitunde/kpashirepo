@@ -22,22 +22,26 @@ export class clientSocketHandler {
     channel.subscribe(postalTopics.playertoppedUpCredit, eventobj =>
       this.onClientToppedUpCredit(eventobj, io)
     );
-    channel.subscribe(
-      postalTopics.firstGameStarted,
-      async eventobj => await this.onFirstGameStarted(eventobj, io)
-    );
-    channel.subscribe(
-      postalTopics.shufflingEnded,
-      async eventobj => await this.onSuffleEnded(eventobj, io)
-    );
-    channel.subscribe(
-      postalTopics.dealingCardsComplete,
-      async eventobj => await this.onDealingCardsComplete(eventobj, io)
-    );
-    channel.subscribe(
-      postalTopics.cardDropped,
-      async eventobj => await this.onCardDropped(eventobj, io)
-    );
+    channel.subscribe(postalTopics.firstGameStarted, eventobj => {
+      this.onFirstGameStarted(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
+    channel.subscribe(postalTopics.shufflingEnded, eventobj => {
+      this.onSuffleEnded(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
+    channel.subscribe(postalTopics.dealingCardsComplete, eventobj => {
+      this.onDealingCardsComplete(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
+    channel.subscribe(postalTopics.cardDropped, eventobj => {
+      this.onCardDropped(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
   }
   sendTableInvite(eventobj, io) {
     var { tableinfo, hostuserinfo, guestuserinfo } = eventobj;
@@ -108,7 +112,7 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideReducerActions.firstGameStarted;
-      var eventname = "userevent" + player.id;
+      var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }
   }
@@ -131,7 +135,7 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideReducerActions.shufflingEnded;
-      var eventname = "userevent" + player.id;
+      var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }
   }
@@ -154,7 +158,7 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideReducerActions.dealingCardsComplete;
-      var eventname = "userevent" + player.id;
+      var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }
   }
@@ -177,7 +181,8 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideReducerActions.cardDropped;
-      var eventname = "userevent" + player.id;
+      var eventname = "userevent" + player.playerid;
+
       io.emit(eventname, returnobj);
     }
   }

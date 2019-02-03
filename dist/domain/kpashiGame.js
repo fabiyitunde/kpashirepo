@@ -110,7 +110,9 @@ class KpashiGame {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         var callingcard = existingplayer.cards.find(a => a.suitType == suittype && a.cardType == cardtype);
         this.setcallcard(existingplayer, callingcard);
-        existingplayer.cards = existingplayer.cards.filter(a => a.cardType !== cardtype && a.suitType !== suittype);
+        var cardid = suittype.toString() + cardtype.toString();
+        var playerscards = [...existingplayer.cards];
+        existingplayer.cards = playerscards.filter(a => a.suitType.toString() + a.cardType.toString() != cardid);
         this.lastplayerposition = existingplayer.sittingposition;
     }
     dropcard(playerid, suittype, cardtype, onGameEndCallback) {
@@ -126,8 +128,10 @@ class KpashiGame {
             if (existingcard == undefined)
                 throw "invalid move";
         }
+        var cardid = suittype.toString() + cardtype.toString();
+        var playerscards = [...existingplayer.cards];
+        existingplayer.cards = playerscards.filter(a => a.suitType.toString() + a.cardType.toString() != cardid);
         this.registerdroppedcard(existingplayer, new card_1.Card(suittype, cardtype));
-        existingplayer.cards = existingplayer.cards.filter(a => a.cardType != cardtype && a.suitType != suittype);
         this.lastplayerposition = existingplayer.sittingposition;
         onGameEndCallback(this.droppedcards.length == this.playerlist.length);
     }
@@ -135,11 +139,12 @@ class KpashiGame {
         this.droppedcards.push([player, card]);
         if (this.firsttopick[1].cardType == cardType_1.CardType.Ace)
             return;
-        this.droppedcards.forEach(dropedcarddetail => {
+        for (let index = 0; index < this.droppedcards.length; index++) {
+            const dropedcarddetail = this.droppedcards[index];
             if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
-                return;
+                continue;
             if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
-                return;
+                continue;
             if (dropedcarddetail[1].cardType == cardType_1.CardType.Ace) {
                 this.firsttopick = dropedcarddetail;
             }
@@ -147,7 +152,7 @@ class KpashiGame {
                 if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
                     this.firsttopick = dropedcarddetail;
             }
-        });
+        }
         this.processpicksequence();
         if (this.droppedcards.length == this.playerlist.length) {
             this.gamestatus = gamestatus_1.GameStatus.Finished;
