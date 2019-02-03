@@ -8,7 +8,7 @@ const index_1 = require("./eventhandlers/index");
 const index_2 = require("./routes/index");
 const socketio = require("socket.io");
 const config = require("config");
-const PORT = 3890;
+const PORT = 80;
 const mongoUrl = "mongodb://localhost/kpashidatabase";
 var app = express();
 app.use(cors({ credentials: true, origin: config.get("clientaddress") }));
