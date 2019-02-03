@@ -1,0 +1,5 @@
+{
+  "jwtPrivateKey": "jwtPrivateKey",
+  "dbconstring": "mongodb://<dbuser>:<dbpassword>@ds149732.mlab.com:49732/kpashidatabase",
+  "clientaddress": "clientaddress"
+}

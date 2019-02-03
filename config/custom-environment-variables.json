@@ -1,0 +1,5 @@
+{
+  "jwtPrivateKey": "jwtPrivateKey",
+  "dbconstring": "dbconstring",
+  "clientaddress": "clientaddress"
+}
