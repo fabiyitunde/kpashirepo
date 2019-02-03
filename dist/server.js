@@ -20,6 +20,7 @@ index_2.initRoutes(app);
 mongoose.connect(config.get("dbconstring"), { useNewUrlParser: true });
 var server = app.listen(PORT, () => {
     console.log("Express server listening on port... " + PORT);
+    console.log("Db Connection", config.get("dbconstring"));
 });
 var io = socketio().listen(server);
 index_1.initHandlers(io);
