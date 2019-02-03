@@ -6,7 +6,7 @@ import { initHandlers } from "./eventhandlers/index";
 import { initRoutes } from "./routes/index";
 import * as socketio from "socket.io";
 import * as config from "config";
-const PORT = 3890;
+const PORT = 80;
 const mongoUrl: string = "mongodb://localhost/kpashidatabase";
 
 var app = express();
