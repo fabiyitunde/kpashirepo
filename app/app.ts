@@ -10,11 +10,11 @@ class App {
   public mongoUrl: string = "mongodb://localhost/kpashidatabase";
   constructor() {
     this.app = express();
-    this.app.use(cors());
-
+    this.app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+    // initHandlers(this.app);
     this.config();
     initRoutes(this.app);
-    initHandlers(this.app);
+
     this.mongoSetup();
 
     console.log("Last Connect");

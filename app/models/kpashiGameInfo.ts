@@ -48,6 +48,7 @@ export const KpashiGameInfoSchema = new mongoose.Schema({
   callingcard: {
     type: { suittype: Number, cardtype: Number }
   },
+  nextplayerdetail: { type: { playerid: String, playername: String } },
   droppedcards: [{ playerid: String, suittype: Number, cardtype: Number }],
   firsttopick: { playerid: String, suittype: Number, cardtype: Number },
   pickupsequence: [{ position: Number, playerid: String }],

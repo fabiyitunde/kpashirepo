@@ -5,10 +5,26 @@ exports.postalChannels = {
 };
 exports.postalTopics = {
     tableInvitation: "tableInvitation",
-    tableInvitationAcceptance: "tableInvitationAcceptance"
+    tableInvitationAcceptance: "tableInvitationAcceptance",
+    tableInformationChanged: "tableInformationChanged",
+    playertoppedUpCredit: "playertoppedUpCredit",
+    firstGameStarted: "firstGameStarted",
+    shufflingEnded: "shufflingEnded",
+    dealingCardsComplete: "dealingCardsComplete",
+    cardDropped: "cardDropped"
 };
 exports.clientSideHandlerAddresses = {
     tableinvite: "tableinvite",
-    tableinviteResponse: "tableinviteResponse"
+    tableinviteResponse: "tableinviteResponse",
+    tableInformationChanged: "tableInformationChanged",
+    gameViewOpened: "gameViewOpened"
+};
+exports.clientSideReducerActions = {
+    playerjoinedtable: "PLAYERJOINEDTABLE",
+    playertoppedUpCredit: "PLAYERTOPPEDUPCREDIT",
+    firstGameStarted: "FIRSTGAMESTARTED",
+    shufflingEnded: "SHUFFLINGENDED",
+    dealingCardsComplete: "DEALINGCARDSCOMPLETE",
+    cardDropped: "CARDDROPPED"
 };
 //# sourceMappingURL=param.js.map

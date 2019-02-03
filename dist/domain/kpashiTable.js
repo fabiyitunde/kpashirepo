@@ -4,6 +4,7 @@ const playerDetail_1 = require("./playerDetail");
 const kpashiGame_1 = require("./kpashiGame");
 const linq = require("linq");
 const player_1 = require("./player");
+const randomNumberGen_1 = require("../utilities/randomNumberGen");
 class KpashiTable {
     constructor() {
         this.hostplayer = new playerDetail_1.PlayerDetail();
@@ -60,8 +61,8 @@ class KpashiTable {
     }
     shufflesittingpositions() {
         for (let position = 0; position < 200; position++) {
-            var player1position = Math.floor(Math.random() * Math.floor(this.playerlist.length - 1)) + 1;
-            var player2position = Math.floor(Math.random() * Math.floor(this.playerlist.length - 1)) + 1;
+            var player1position = randomNumberGen_1.getRandomInt(1, this.playerlist.length);
+            var player2position = randomNumberGen_1.getRandomInt(1, this.playerlist.length);
             var player1 = this.playerlist.find(a => a.sittingposition == player1position);
             var player2 = this.playerlist.find(a => a.sittingposition == player2position);
             player1.sittingposition = player2position;
@@ -102,10 +103,9 @@ class KpashiTable {
             this.setnexttoplay();
     }
     pickfirstToPlay() {
-        var noninclusivemaxrange = this.playerlist.length + 1;
         for (let index = 0; index < 200; index++) {
-            var player1position = Math.random() * (noninclusivemaxrange - 1) + 1;
-            var player2position = Math.random() * (noninclusivemaxrange - 1) + 1;
+            var player1position = randomNumberGen_1.getRandomInt(1, this.playerlist.length);
+            var player2position = randomNumberGen_1.getRandomInt(1, this.playerlist.length);
             if (player1position == player2position)
                 continue;
             var player1 = linq
@@ -146,6 +146,9 @@ class KpashiTable {
     playerAlreadyExist(playerid) {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         return existingplayer != null && existingplayer != undefined;
+    }
+    registerActivity(playerid) {
+        var existingrec = this.playerlist.find(a => a.playerid == playerid);
     }
     createKpashiGameWithPlayerIdOfFirstPlayer(gameid, playerid) {
         if (this.gameisOn)

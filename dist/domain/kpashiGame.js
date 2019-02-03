@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const queue_typescript_1 = require("queue-typescript");
 const card_1 = require("./card");
 const cardType_1 = require("./cardType");
-const suitType_1 = require("./suitType");
 const gamestatus_1 = require("./gamestatus");
 const gameResult_1 = require("./gameResult");
 const linq = require("linq");
+const randomNumberGen_1 = require("../utilities/randomNumberGen");
 class KpashiGame {
     constructor() {
         this.playerlist = [];
@@ -14,6 +14,7 @@ class KpashiGame {
         this.deckofcards = new queue_typescript_1.Queue();
         this.openedcards = new queue_typescript_1.Queue();
         this.droppedcards = [];
+        this.firsttopick = [];
         this.pickupsequence = new queue_typescript_1.Queue();
         this.gameresults = [];
     }
@@ -21,10 +22,9 @@ class KpashiGame {
         this.id = gameid;
         this.kpashitableid = tableid;
         this.unitsperhand = unitsperhand;
-        for (let suit in suitType_1.SuitType) {
-            const suittype = suitType_1.SuitType[suit];
+        for (let suitindex = 0; suitindex < 4; suitindex++) {
             for (let index = 0; index < 10; index++) {
-                var newcard = new card_1.Card(suittype, index + 1);
+                var newcard = new card_1.Card(suitindex, index + 1);
                 this.playingcards.push(newcard);
             }
             this.gamestatus = gamestatus_1.GameStatus.Created;
@@ -46,6 +46,9 @@ class KpashiGame {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         if (existingplayer.sittingposition !== 1)
             throw "not your turn to play";
+        if (this.gamestatus != gamestatus_1.GameStatus.Created &&
+            this.gamestatus != gamestatus_1.GameStatus.ShufflingCards)
+            throw "this game is not in shuffling mode any more";
         this.gamestatus = gamestatus_1.GameStatus.ShufflingCards;
         var shuffledcards = {};
         var position = 0;
@@ -55,9 +58,9 @@ class KpashiGame {
         });
         for (let index = 0; index < 1000; index++) {
             const element = [index];
-            var cardtype = Math.random() * (11 - 1) + 1;
-            var suitType = Math.random() * (5 - 1) + 1;
-            var pickedpositioninthedeck = Math.random() * (41 - 1) + 1;
+            var cardtype = randomNumberGen_1.getRandomInt(1, 10);
+            var suitType = randomNumberGen_1.getRandomInt(0, 3);
+            var pickedpositioninthedeck = randomNumberGen_1.getRandomInt(1, 40);
             var currentcardinpickedposition = shuffledcards[pickedpositioninthedeck];
             var pickedcardindeck = new card_1.Card(suitType, cardtype);
             var currentpositionofpickedCard = Number.parseInt(Object.keys(shuffledcards).find(key => {
@@ -69,6 +72,7 @@ class KpashiGame {
             shuffledcards[currentpositionofpickedCard] = currentcardinpickedposition;
         }
         this.playingcards = [];
+        this.deckofcards = new queue_typescript_1.Queue();
         for (let index = 0; index < 40; index++) {
             const stackposition = index + 1;
             this.playingcards.push(shuffledcards[stackposition]);
@@ -79,10 +83,12 @@ class KpashiGame {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         if (existingplayer.sittingposition !== 1)
             throw "not your turn to play";
+        if (this.gamestatus != gamestatus_1.GameStatus.ShufflingCards)
+            throw "Invalid Move";
         for (let index = 0; index < 3; index++) {
             this.playerlist.forEach(player => {
                 var card = this.deckofcards.dequeue();
-                existingplayer.cards.push(card);
+                player.cards.push(card);
             });
         }
         for (let index = 0; index < this.playerlist.length + 1; index++) {
@@ -104,8 +110,7 @@ class KpashiGame {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         var callingcard = existingplayer.cards.find(a => a.suitType == suittype && a.cardType == cardtype);
         this.setcallcard(existingplayer, callingcard);
-        existingplayer.cards = existingplayer.cards.filter(a => a.cardType !== callingcard.cardType &&
-            a.suitType !== callingcard.suitType);
+        existingplayer.cards = existingplayer.cards.filter(a => a.cardType !== cardtype && a.suitType !== suittype);
         this.lastplayerposition = existingplayer.sittingposition;
     }
     dropcard(playerid, suittype, cardtype, onGameEndCallback) {
@@ -120,12 +125,11 @@ class KpashiGame {
             var existingcard = existingplayer.cardsaffectedbycallingcards.find(a => a.suitType == suittype && a.cardType == cardtype);
             if (existingcard == undefined)
                 throw "invalid move";
-            var card = existingplayer.cards.find(a => a.cardType == cardtype && a.suitType == suittype);
-            this.registerdroppedcard(existingplayer, card);
-            existingplayer.cards = existingplayer.cards.filter(a => a.cardType !== card.cardType && a.suitType !== card.suitType);
-            this.lastplayerposition = existingplayer.sittingposition;
-            onGameEndCallback(this.droppedcards.length == this.playerlist.length);
         }
+        this.registerdroppedcard(existingplayer, new card_1.Card(suittype, cardtype));
+        existingplayer.cards = existingplayer.cards.filter(a => a.cardType != cardtype && a.suitType != suittype);
+        this.lastplayerposition = existingplayer.sittingposition;
+        onGameEndCallback(this.droppedcards.length == this.playerlist.length);
     }
     registerdroppedcard(player, card) {
         this.droppedcards.push([player, card]);
@@ -140,8 +144,7 @@ class KpashiGame {
                 this.firsttopick = dropedcarddetail;
             }
             else {
-                if (this.firsttopick[1].cardType <
-                    dropedcarddetail[1].cardType)
+                if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
                     this.firsttopick = dropedcarddetail;
             }
         });
@@ -163,20 +166,21 @@ class KpashiGame {
             var player = this.playerlist.find(a => a.sittingposition == currentposition);
             this.pickupsequence.enqueue(player);
         }
+        console.log("pickSeq", this.pickupsequence);
     }
     processopenedcards() {
         while (this.pickupsequence.length > 0) {
             var playertopick = this.pickupsequence.dequeue();
+            var playertoupdate = this.playerlist.find(a => a.playerid == playertopick.playerid);
             var continuepicking = true;
             if (this.openedcards.length == 0)
                 continue;
-            var nosOfAces = playertopick.cards.filter(a => a.cardType == cardType_1.CardType.Ace)
-                .length;
+            var nosOfAces = playertoupdate.cards.filter(a => a.cardType === cardType_1.CardType.Ace).length;
             if (nosOfAces == 2)
                 continue;
             while (this.openedcards.length > 0 && continuepicking) {
                 var cardontop = this.openedcards.front;
-                var assumedcardlist = [...playertopick.cards, cardontop];
+                var assumedcardlist = [...playertoupdate.cards, cardontop];
                 let totalscore = 0;
                 assumedcardlist.forEach(card => {
                     var cardpoint = card.cardType == cardType_1.CardType.Ace ? 11 : card.cardType;
@@ -184,7 +188,7 @@ class KpashiGame {
                 });
                 if (totalscore <= 21) {
                     this.openedcards.dequeue();
-                    playertopick.cards = assumedcardlist;
+                    playertoupdate.cards = assumedcardlist;
                 }
                 else {
                     continuepicking = false;
@@ -218,7 +222,7 @@ class KpashiGame {
         });
     }
     analyseCardsAffectedByCallingCards() {
-        var otherplayers = this.playerlist.filter(a => a.sittingposition !== 1);
+        var otherplayers = this.playerlist.filter(a => a.sittingposition != 1);
         otherplayers.forEach(player => {
             var affectedcards = player.cards.filter(a => a.suitType == this.callingcard.suitType);
             if (affectedcards && affectedcards.length > 0)

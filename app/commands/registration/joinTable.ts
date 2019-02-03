@@ -2,11 +2,11 @@ import {
   getKpashiTable,
   saveKpashiTable
 } from "../../repositories/kpashiTableRepo";
-import { KpashiTable } from "../../domain/kpashiTable";
 import { validateToken } from "../../utilities/tokenvalidatorprovider";
 import { getUserInfo } from "../../queries/getUserInfo";
 import { getTableInfo } from "../../queries/getTableInfo";
 import { postalChannels, postalTopics } from "../../param";
+import * as postal from "postal";
 export class joinTable {
   userid: string;
   tableid: string;

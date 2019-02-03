@@ -13,6 +13,7 @@ const tokenvalidatorprovider_1 = require("../../utilities/tokenvalidatorprovider
 const getUserInfo_1 = require("../../queries/getUserInfo");
 const getTableInfo_1 = require("../../queries/getTableInfo");
 const param_1 = require("../../param");
+const postal = require("postal");
 class joinTable {
     constructor(userid, tableid, credittoken) {
         this.userid = userid;

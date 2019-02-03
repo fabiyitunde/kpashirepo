@@ -3,8 +3,10 @@ import { createUser } from "../commands/registration/createUser";
 import { createMyTable } from "../commands/registration/createMyTable";
 import { getMyTableList } from "../queries/getMyTableList";
 import { getAllUsersList } from "../queries/getAllUsersList";
+import { getTableInfo } from "../queries/getTableInfo";
 import { sendTableInvite } from "../commands/registration/sendTableInvite";
 import { joinTable } from "../commands/registration/joinTable";
+import { topUpCredit } from "../commands/registration/topUpCredit";
 
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
@@ -61,8 +63,22 @@ export class RegistrationController {
       const { userid, credittoken, tableid } = req.body;
       let cmd = new joinTable(userid, tableid, credittoken);
       await cmd.process();
-      res.status(200).json({ success: true });
+      var tableinfo = await getTableInfo(tableid);
+      res.status(200).json({ success: true, tableinfo: tableinfo });
     } catch (error) {
+      console.log("It was an error", error);
+      res.status(400).send(error);
+    }
+  }
+  public async topUpCredit(req: Request, res: Response) {
+    try {
+      const { userid, credittoken, tableid } = req.body;
+      let cmd = new topUpCredit(userid, tableid, credittoken);
+      await cmd.process();
+      var tableinfo = await getTableInfo(tableid);
+      res.status(200).json({ success: true, tableinfo: tableinfo });
+    } catch (error) {
+      console.log("Error Detected", error);
       res.status(400).send(error);
     }
   }

@@ -2,6 +2,7 @@ import { PlayerDetail } from "./playerDetail";
 import { KpashiGame } from "./kpashiGame";
 import * as linq from "linq";
 import { Player } from "./player";
+import { getRandomInt } from "../utilities/randomNumberGen";
 export class KpashiTable {
   id: string;
   hostplayer: PlayerDetail = new PlayerDetail();
@@ -64,10 +65,8 @@ export class KpashiTable {
   }
   shufflesittingpositions() {
     for (let position = 0; position < 200; position++) {
-      var player1position =
-        Math.floor(Math.random() * Math.floor(this.playerlist.length - 1)) + 1;
-      var player2position =
-        Math.floor(Math.random() * Math.floor(this.playerlist.length - 1)) + 1;
+      var player1position = getRandomInt(1, this.playerlist.length);
+      var player2position = getRandomInt(1, this.playerlist.length);
       var player1 = this.playerlist.find(
         a => a.sittingposition == player1position
       );
@@ -113,10 +112,10 @@ export class KpashiTable {
     if (listofmemberstoremove.count() == 0) this.setnexttoplay();
   }
   pickfirstToPlay() {
-    var noninclusivemaxrange = this.playerlist.length + 1;
     for (let index = 0; index < 200; index++) {
-      var player1position = Math.random() * (noninclusivemaxrange - 1) + 1;
-      var player2position = Math.random() * (noninclusivemaxrange - 1) + 1;
+      var player1position = getRandomInt(1, this.playerlist.length);
+      var player2position = getRandomInt(1, this.playerlist.length);
+
       if (player1position == player2position) continue;
       var player1 = linq
         .from(this.playerlist)
@@ -153,6 +152,9 @@ export class KpashiTable {
   playerAlreadyExist(playerid: string): boolean {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     return existingplayer != null && existingplayer != undefined;
+  }
+  registerActivity(playerid: string) {
+    var existingrec = this.playerlist.find(a => a.playerid == playerid);
   }
   createKpashiGameWithPlayerIdOfFirstPlayer(
     gameid: string,

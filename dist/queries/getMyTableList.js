@@ -20,7 +20,8 @@ exports.getMyTableList = (userid) => __awaiter(this, void 0, void 0, function* (
     });
     if (tablelist == null || tablelist.length == 0)
         return resultlist;
-    tablelist.forEach((tableinfo) => __awaiter(this, void 0, void 0, function* () {
+    for (let index = 0; index < tablelist.length; index++) {
+        const tableinfo = tablelist[index];
         var newtableinfo = {};
         newtableinfo.id = tableinfo.tableid;
         newtableinfo.description = tableinfo.description;
@@ -31,50 +32,16 @@ exports.getMyTableList = (userid) => __awaiter(this, void 0, void 0, function* (
         newtableinfo.isOn = tableinfo.gameison;
         newtableinfo.createOn = tableinfo.createdon;
         var playerlist = tableinfo.playerlist;
-        newtableinfo.membercount = playerlist.length;
-        var memberlist = [];
-        playerlist.forEach(player => {
-            kpashiPlayer_1.KpashiPlayer.findOne({ id: player.playerid }).exec((err, doc) => {
-                console.log("doc " + new Date().getTime().toLocaleString(), doc, tableinfo.description);
-                var playerinfo = doc;
-                var newplayer = {};
-                newplayer.id = player.playerid;
-                newplayer.fullname = playerinfo.fullname;
-                newplayer.position = player.sittingposition;
-                newplayer.unitbalance = player.creditbalance;
-                newplayer.photourl = playerinfo.photourl;
-                newplayer.lastactivitytime = playerinfo.lastactivitytime;
-                memberlist.push(newplayer);
-            });
+        var filterlist = linq
+            .from(playerlist)
+            .select(player => {
+            var ret = { id: player.playerid };
+            return ret;
+        })
+            .toArray();
+        var playerinfolist = yield kpashiPlayer_1.KpashiPlayer.find({
+            $or: [...filterlist]
         });
-        newtableinfo.members = [...memberlist];
-        resultlist.push(newtableinfo);
-    }));
-    return resultlist;
-});
-exports.getMyTableList2 = (userid) => __awaiter(this, void 0, void 0, function* () {
-    var resultlist = [];
-    var tablelist = yield KpashiTableInfo.find({
-        $or: [{ "hostplayer.playerid": userid }, { "playerlist.playerid": userid }]
-    });
-    if (tablelist == null || tablelist.length == 0)
-        return resultlist;
-    tablelist.forEach((tableinfo) => __awaiter(this, void 0, void 0, function* () {
-        var newtableinfo = {};
-        newtableinfo.id = tableinfo.tableid;
-        newtableinfo.description = tableinfo.description;
-        newtableinfo.hostname = tableinfo.hostplayer.name;
-        newtableinfo.hostplayerid = tableinfo.hostplayer.playerid;
-        newtableinfo.oneroundunit = tableinfo.unitperround;
-        newtableinfo.currentGameId = tableinfo.currentGameId;
-        newtableinfo.isOn = tableinfo.gameison;
-        newtableinfo.createOn = tableinfo.createdon;
-        var playerlist = tableinfo.playerlist;
-        var filterlist = linq.from(playerlist).select(player => {
-            id: player.playerid;
-        });
-        var playerinfolist = yield kpashiPlayer_1.KpashiPlayer.find({ $or: filterlist });
-        console.log("Database ", playerinfolist);
         newtableinfo.membercount = playerlist.length;
         var memberlist = [];
         playerlist.forEach(player => {
@@ -90,8 +57,7 @@ exports.getMyTableList2 = (userid) => __awaiter(this, void 0, void 0, function* 
         });
         newtableinfo.members = [...memberlist];
         resultlist.push(newtableinfo);
-        console.log(newtableinfo);
-    }));
+    }
     return resultlist;
 });
 //# sourceMappingURL=getMyTableList.js.map

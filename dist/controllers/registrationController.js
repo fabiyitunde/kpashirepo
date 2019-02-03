@@ -12,8 +12,10 @@ const createUser_1 = require("../commands/registration/createUser");
 const createMyTable_1 = require("../commands/registration/createMyTable");
 const getMyTableList_1 = require("../queries/getMyTableList");
 const getAllUsersList_1 = require("../queries/getAllUsersList");
+const getTableInfo_1 = require("../queries/getTableInfo");
 const sendTableInvite_1 = require("../commands/registration/sendTableInvite");
 const joinTable_1 = require("../commands/registration/joinTable");
+const topUpCredit_1 = require("../commands/registration/topUpCredit");
 class RegistrationController {
     createuser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,9 +69,26 @@ class RegistrationController {
                 const { userid, credittoken, tableid } = req.body;
                 let cmd = new joinTable_1.joinTable(userid, tableid, credittoken);
                 yield cmd.process();
-                res.status(200).json({ success: true });
+                var tableinfo = yield getTableInfo_1.getTableInfo(tableid);
+                res.status(200).json({ success: true, tableinfo: tableinfo });
             }
             catch (error) {
+                console.log("It was an error", error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    topUpCredit(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userid, credittoken, tableid } = req.body;
+                let cmd = new topUpCredit_1.topUpCredit(userid, tableid, credittoken);
+                yield cmd.process();
+                var tableinfo = yield getTableInfo_1.getTableInfo(tableid);
+                res.status(200).json({ success: true, tableinfo: tableinfo });
+            }
+            catch (error) {
+                console.log("Error Detected", error);
                 res.status(400).send(error);
             }
         });

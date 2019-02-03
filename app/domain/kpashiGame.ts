@@ -6,6 +6,7 @@ import { SuitType } from "./suitType";
 import { GameStatus } from "./gamestatus";
 import { GameResult } from "./gameResult";
 import * as linq from "linq";
+import { getRandomInt } from "../utilities/randomNumberGen";
 export class KpashiGame {
   id: string;
   kpashitableid: string;
@@ -19,19 +20,18 @@ export class KpashiGame {
   lastplayerposition: number;
   openedcards: Queue<Card> = new Queue<Card>();
   callingcard: Card;
-  droppedcards: [Player, Card][] = [];
-  firsttopick: [Player, Card];
-  pickupsequence: Queue<Player> = new Queue<Player>();
+  droppedcards: any[] = [];
+  firsttopick = [];
+  pickupsequence: Queue<any> = new Queue<any>();
   gameresults: GameResult[] = [];
 
   initialize(gameid: string, tableid: string, unitsperhand: number) {
     this.id = gameid;
     this.kpashitableid = tableid;
     this.unitsperhand = unitsperhand;
-    for (let suit in SuitType) {
-      const suittype: SuitType = (SuitType[suit] as any) as SuitType;
+    for (let suitindex = 0; suitindex < 4; suitindex++) {
       for (let index = 0; index < 10; index++) {
-        var newcard = new Card(<number>suittype, index + 1);
+        var newcard = new Card(suitindex, index + 1);
         this.playingcards.push(newcard);
       }
       this.gamestatus = GameStatus.Created;
@@ -52,6 +52,11 @@ export class KpashiGame {
   shufflecards(playerid: string) {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     if (existingplayer.sittingposition !== 1) throw "not your turn to play";
+    if (
+      this.gamestatus != GameStatus.Created &&
+      this.gamestatus != GameStatus.ShufflingCards
+    )
+      throw "this game is not in shuffling mode any more";
     this.gamestatus = GameStatus.ShufflingCards;
     var shuffledcards: { [id: number]: Card } = {};
     var position: number = 0;
@@ -61,9 +66,9 @@ export class KpashiGame {
     });
     for (let index = 0; index < 1000; index++) {
       const element = [index];
-      var cardtype = <CardType>Math.random() * (11 - 1) + 1;
-      var suitType = <SuitType>Math.random() * (5 - 1) + 1;
-      var pickedpositioninthedeck = Math.random() * (41 - 1) + 1;
+      var cardtype = getRandomInt(1, 10);
+      var suitType = getRandomInt(0, 3);
+      var pickedpositioninthedeck = getRandomInt(1, 40);
       var currentcardinpickedposition = shuffledcards[pickedpositioninthedeck];
       var pickedcardindeck = new Card(suitType, cardtype);
       var currentpositionofpickedCard = Number.parseInt(
@@ -77,6 +82,7 @@ export class KpashiGame {
       shuffledcards[currentpositionofpickedCard] = currentcardinpickedposition;
     }
     this.playingcards = [];
+    this.deckofcards = new Queue<Card>();
     for (let index = 0; index < 40; index++) {
       const stackposition = index + 1;
       this.playingcards.push(shuffledcards[stackposition]);
@@ -86,10 +92,11 @@ export class KpashiGame {
   dealcards(playerid: string) {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     if (existingplayer.sittingposition !== 1) throw "not your turn to play";
+    if (this.gamestatus != GameStatus.ShufflingCards) throw "Invalid Move";
     for (let index = 0; index < 3; index++) {
       this.playerlist.forEach(player => {
         var card = this.deckofcards.dequeue();
-        existingplayer.cards.push(card);
+        player.cards.push(card);
       });
     }
     for (let index = 0; index < this.playerlist.length + 1; index++) {
@@ -106,23 +113,21 @@ export class KpashiGame {
     this.firsttopick = [player, callcard];
     this.gamestatus = GameStatus.Started;
   }
-  playcallcard(playerid: string, suittype: SuitType, cardtype: CardType) {
+  playcallcard(playerid: string, suittype: number, cardtype: number) {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     var callingcard = existingplayer.cards.find(
       a => a.suitType == suittype && a.cardType == cardtype
     );
     this.setcallcard(existingplayer, callingcard);
     existingplayer.cards = existingplayer.cards.filter(
-      a =>
-        a.cardType !== callingcard.cardType &&
-        a.suitType !== callingcard.suitType
+      a => a.cardType !== cardtype && a.suitType !== suittype
     );
     this.lastplayerposition = existingplayer.sittingposition;
   }
   dropcard(
     playerid: string,
-    suittype: SuitType,
-    cardtype: CardType,
+    suittype: number,
+    cardtype: number,
     onGameEndCallback
   ) {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
@@ -137,18 +142,15 @@ export class KpashiGame {
         a => a.suitType == suittype && a.cardType == cardtype
       );
       if (existingcard == undefined) throw "invalid move";
-      var card = existingplayer.cards.find(
-        a => a.cardType == cardtype && a.suitType == suittype
-      );
-      this.registerdroppedcard(existingplayer, card);
-      existingplayer.cards = existingplayer.cards.filter(
-        a => a.cardType !== card.cardType && a.suitType !== card.suitType
-      );
-      this.lastplayerposition = existingplayer.sittingposition;
-      onGameEndCallback(this.droppedcards.length == this.playerlist.length);
     }
+    this.registerdroppedcard(existingplayer, new Card(suittype, cardtype));
+    existingplayer.cards = existingplayer.cards.filter(
+      a => a.cardType != cardtype && a.suitType != suittype
+    );
+    this.lastplayerposition = existingplayer.sittingposition;
+    onGameEndCallback(this.droppedcards.length == this.playerlist.length);
   }
-  registerdroppedcard(player: Player, card: Card) {
+  registerdroppedcard(player: any, card: any) {
     this.droppedcards.push([player, card]);
     if (this.firsttopick[1].cardType == CardType.Ace) return;
     this.droppedcards.forEach(dropedcarddetail => {
@@ -157,10 +159,7 @@ export class KpashiGame {
       if (dropedcarddetail[1].cardType == CardType.Ace) {
         this.firsttopick = dropedcarddetail;
       } else {
-        if (
-          <number>this.firsttopick[1].cardType <
-          <number>dropedcarddetail[1].cardType
-        )
+        if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
           this.firsttopick = dropedcarddetail;
       }
     });
@@ -172,7 +171,7 @@ export class KpashiGame {
     }
   }
   processpicksequence() {
-    this.pickupsequence = new Queue<Player>();
+    this.pickupsequence = new Queue<any>();
     this.pickupsequence.enqueue(this.firsttopick[0]);
     var currentposition = this.firsttopick[0].sittingposition;
     for (let index = 0; index < this.playerlist.length - 1; index++) {
@@ -183,27 +182,32 @@ export class KpashiGame {
       );
       this.pickupsequence.enqueue(player);
     }
+    console.log("pickSeq", this.pickupsequence);
   }
   processopenedcards() {
     while (this.pickupsequence.length > 0) {
       var playertopick = this.pickupsequence.dequeue();
+      var playertoupdate = this.playerlist.find(
+        a => a.playerid == playertopick.playerid
+      );
+
       var continuepicking: boolean = true;
       if (this.openedcards.length == 0) continue;
-      var nosOfAces = playertopick.cards.filter(a => a.cardType == CardType.Ace)
-        .length;
+      var nosOfAces = playertoupdate.cards.filter(
+        a => a.cardType === CardType.Ace
+      ).length;
       if (nosOfAces == 2) continue;
       while (this.openedcards.length > 0 && continuepicking) {
         var cardontop = this.openedcards.front;
-        var assumedcardlist: Card[] = [...playertopick.cards, cardontop];
+        var assumedcardlist: any[] = [...playertoupdate.cards, cardontop];
         let totalscore: number = 0;
         assumedcardlist.forEach(card => {
-          var cardpoint =
-            card.cardType == CardType.Ace ? 11 : <number>card.cardType;
+          var cardpoint = card.cardType == CardType.Ace ? 11 : card.cardType;
           totalscore += cardpoint;
         });
         if (totalscore <= 21) {
           this.openedcards.dequeue();
-          playertopick.cards = assumedcardlist;
+          playertoupdate.cards = assumedcardlist;
         } else {
           continuepicking = false;
         }
@@ -213,8 +217,7 @@ export class KpashiGame {
   processresults() {
     this.playerlist.forEach(player => {
       var totalscore = linq.from(player.cards).aggregate(0, (acc, card) => {
-        var cardvalue =
-          card.cardType == CardType.Ace ? 11 : <number>card.cardType;
+        var cardvalue = card.cardType == CardType.Ace ? 11 : card.cardType;
         return acc + cardvalue;
       });
       var gameresult = new GameResult(player, totalscore, 0);
@@ -238,7 +241,7 @@ export class KpashiGame {
     });
   }
   analyseCardsAffectedByCallingCards() {
-    var otherplayers = this.playerlist.filter(a => a.sittingposition !== 1);
+    var otherplayers = this.playerlist.filter(a => a.sittingposition != 1);
     otherplayers.forEach(player => {
       var affectedcards = player.cards.filter(
         a => a.suitType == this.callingcard.suitType

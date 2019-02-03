@@ -9,7 +9,7 @@ const KpashiTableInfo = mongoose.model(
 export const getKpashiTable = async (tableid: string): Promise<KpashiTable> => {
   var existingrec: any = await KpashiTableInfo.findOne({ tableid: tableid });
   var returnobj = new KpashiTable();
-  returnobj.gameisOn = existingrec.gameon;
+  returnobj.gameisOn = existingrec.gameison;
   returnobj.unitperround = existingrec.unitperround;
   returnobj.id = existingrec.tableid;
   var hostplayer: PlayerDetail = new PlayerDetail();
@@ -20,14 +20,16 @@ export const getKpashiTable = async (tableid: string): Promise<KpashiTable> => {
   returnobj.currentGameId = existingrec.currentGameId;
   returnobj.createdon = existingrec.createdon;
   if (existingrec.playerlist) {
+    var playerlist: any[] = [];
     existingrec.playerlist.forEach(playerdetail => {
       var newplayerdetail: PlayerDetail = new PlayerDetail();
       newplayerdetail.creditbalance = playerdetail.creditbalance;
       newplayerdetail.playerid = playerdetail.playerid;
       newplayerdetail.playername = playerdetail.name;
       newplayerdetail.sittingposition = playerdetail.sittingposition;
-      returnobj.playerlist.push(newplayerdetail);
+      playerlist.push(newplayerdetail);
     });
+    returnobj.playerlist = playerlist;
   }
   return returnobj;
 };

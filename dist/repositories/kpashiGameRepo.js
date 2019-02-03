@@ -14,7 +14,7 @@ const kpashiGame_1 = require("../domain/kpashiGame");
 const card_1 = require("../domain/card");
 const player_1 = require("../domain/player");
 const linq = require("linq");
-const gameResult_1 = require("domain/gameResult");
+const gameResult_1 = require("../domain/gameResult");
 const KpashiGameInfo = mongoose.model("KpashiGameInfo", kpashiGameInfo_1.KpashiGameInfoSchema);
 exports.getKpashiGame = (gameid) => __awaiter(this, void 0, void 0, function* () {
     var existingrec = yield KpashiGameInfo.findOne({ id: gameid });
@@ -38,8 +38,10 @@ exports.getKpashiGame = (gameid) => __awaiter(this, void 0, void 0, function* ()
         domainplayerlist.push(newrec);
     });
     var returnobj = new kpashiGame_1.KpashiGame();
-    var callingcard = existingrec.callingcard;
-    returnobj.callingcard = new card_1.Card(callingcard.suittype, callingcard.cardtype);
+    if (existingrec.callingcard) {
+        var callingcard = existingrec.callingcard;
+        returnobj.callingcard = new card_1.Card(callingcard.suittype, callingcard.cardtype);
+    }
     var deckofcards = existingrec.deckofcards;
     deckofcards = linq
         .from(deckofcards)
@@ -54,11 +56,16 @@ exports.getKpashiGame = (gameid) => __awaiter(this, void 0, void 0, function* ()
         var card = new card_1.Card(droppedcard.suittype, droppedcard.cardtype);
         returnobj.droppedcards.push([player, card]);
     });
-    var firsttopick = [
-        domainplayerlist.find(a => a.playerid == existingrec.firsttopick.playerid),
-        new card_1.Card(existingrec.firsttopick.suittype, existingrec.firsttopick.cardtype)
-    ];
-    returnobj.firsttopick = firsttopick;
+    if (existingrec.firsttopick.playerid) {
+        var firsttopick = [
+            domainplayerlist.find(a => a.playerid == existingrec.firsttopick.playerid),
+            new card_1.Card(existingrec.firsttopick.suittype, existingrec.firsttopick.cardtype)
+        ];
+        returnobj.firsttopick = firsttopick;
+    }
+    else {
+        returnobj.firsttopick = null;
+    }
     var dbgameresults = existingrec.gameresults;
     dbgameresults.forEach(gameresult => {
         var gameresultplayer = domainplayerlist.find(a => a.playerid == gameresult.playerid);
@@ -95,84 +102,118 @@ exports.getKpashiGame = (gameid) => __awaiter(this, void 0, void 0, function* ()
     return returnobj;
 });
 exports.saveKpashiGame = (kpashigame) => __awaiter(this, void 0, void 0, function* () {
-    var kpashigameinfo;
+    var kpashigameinfo = {};
     kpashigameinfo.id = kpashigame.id;
     kpashigameinfo.kpashitableid = kpashigame.kpashitableid;
-    kpashigame.playerlist.forEach(player => {
-        var newplayer;
+    var playerlist = kpashigame.playerlist;
+    var kpashigameinfoplayerlist = [];
+    playerlist.forEach(player => {
+        var newplayer = {};
         newplayer.creditbalance = player.creditbalance;
         newplayer.playerid = player.playerid;
         newplayer.playername = player.playername;
         newplayer.sittingposition = player.sittingposition;
         newplayer.winposition = player.winposition;
-        player.cards.forEach(card => newplayer.cards.push({ suittype: card.suitType, cardtype: card.cardType }));
-        player.cardsaffectedbycallingcards.forEach(card => newplayer.cardsaffectedbycallingcards.push({
+        var cards = player.cards;
+        var newplayercards = [];
+        cards.forEach(card => newplayercards.push({ suittype: card.suitType, cardtype: card.cardType }));
+        newplayer.cards = newplayercards;
+        var cardsaffectedbycallingcards = player.cardsaffectedbycallingcards;
+        var newplayercardsaffectedbycallingcards = [];
+        cardsaffectedbycallingcards.forEach(card => newplayercardsaffectedbycallingcards.push({
             suittype: card.suitType,
             cardtype: card.cardType
         }));
-        kpashigameinfo.playerlist.push(newplayer);
+        newplayer.cardsaffectedbycallingcards = newplayercardsaffectedbycallingcards;
+        kpashigameinfoplayerlist.push(newplayer);
     });
-    kpashigame.playingcards.forEach(card => kpashigameinfo.playingcards.push({
+    kpashigameinfo.playerlist = kpashigameinfoplayerlist;
+    var playingcards = kpashigame.playingcards;
+    var kpashigameinfoplayingcards = [];
+    playingcards.forEach(card => kpashigameinfoplayingcards.push({
         suittype: card.suitType,
         cardtype: card.cardType
     }));
+    kpashigameinfo.playingcards = kpashigameinfoplayingcards;
     var queuepositioncounter = 0;
+    var kpashigameinfodeckofcards = [];
     while (kpashigame.deckofcards.length > 0) {
         queuepositioncounter += 1;
         var selectedcard = kpashigame.deckofcards.dequeue();
-        kpashigameinfo.deckofcards.push({
+        kpashigameinfodeckofcards.push({
             position: queuepositioncounter,
             suittype: selectedcard.suitType,
             cardtype: selectedcard.cardType
         });
     }
+    kpashigameinfo.deckofcards = kpashigameinfodeckofcards;
     kpashigameinfo.unitsperhand = kpashigame.unitsperhand;
     kpashigameinfo.gamestatus = kpashigame.gamestatus;
     kpashigameinfo.startedAt = kpashigame.startedAt;
     kpashigameinfo.startTime = kpashigame.startTime;
     kpashigameinfo.lastplayerposition = kpashigame.lastplayerposition;
     queuepositioncounter = 0;
+    var kpashigameinfoopenedcards = [];
     while (kpashigame.openedcards.length > 0) {
         queuepositioncounter += 1;
         var selectedcard = kpashigame.openedcards.dequeue();
-        kpashigameinfo.openedcards.push({
+        kpashigameinfoopenedcards.push({
             position: queuepositioncounter,
             suittype: selectedcard.suitType,
             cardtype: selectedcard.cardType
         });
     }
-    kpashigameinfo.callingcard = {
-        suittype: kpashigame.callingcard.suitType,
-        cardtype: kpashigame.callingcard.cardType
-    };
-    kpashigame.droppedcards.forEach(droppedcard => {
-        kpashigameinfo.droppedcards.push({
-            playerid: droppedcard[0].playerid,
-            suittype: droppedcard[1].suitType,
-            cardtype: droppedcard[1].cardType
+    kpashigameinfo.openedcards = kpashigameinfoopenedcards;
+    if (kpashigame.callingcard)
+        kpashigameinfo.callingcard = {
+            suittype: kpashigame.callingcard.suitType,
+            cardtype: kpashigame.callingcard.cardType
+        };
+    var nextplayer = kpashigame.nextplayer();
+    if (nextplayer)
+        kpashigameinfo.nextplayerdetail = {
+            playerid: nextplayer.playerid,
+            playername: nextplayer.playername
+        };
+    var kpashigameinfodroppedcards = [];
+    var droppedcards = kpashigame.droppedcards;
+    if (droppedcards.length > 0) {
+        droppedcards.forEach(droppedcard => {
+            kpashigameinfodroppedcards.push({
+                playerid: droppedcard[0].playerid,
+                suittype: droppedcard[1].suitType,
+                cardtype: droppedcard[1].cardType
+            });
         });
-    });
-    kpashigameinfo.firsttopick = {
-        playerid: kpashigame.firsttopick[0].playerid,
-        suittype: kpashigame.firsttopick[1].suitType,
-        cardtype: kpashigame.firsttopick[1].cardType
-    };
+    }
+    kpashigameinfo.droppedcards = kpashigameinfodroppedcards;
+    if (kpashigame.firsttopick && kpashigame.firsttopick[0])
+        kpashigameinfo.firsttopick = {
+            playerid: kpashigame.firsttopick[0].playerid,
+            suittype: kpashigame.firsttopick[1].suitType,
+            cardtype: kpashigame.firsttopick[1].cardType
+        };
     queuepositioncounter = 0;
+    var kpashigameinfopickupsequence = [];
     while (kpashigame.pickupsequence.length > 0) {
         queuepositioncounter += 1;
         var selectedplayer = kpashigame.pickupsequence.dequeue();
-        kpashigameinfo.pickupsequence.push({
+        kpashigameinfopickupsequence.push({
             position: queuepositioncounter,
             playerid: selectedplayer.playerid
         });
     }
-    kpashigame.gameresults.forEach(gameresult => {
-        kpashigameinfo.gameresults.push({
+    kpashigameinfo.pickupsequence = kpashigameinfopickupsequence;
+    var kpashigameinfogameresults = [];
+    var gameresults = kpashigame.gameresults;
+    gameresults.forEach(gameresult => {
+        kpashigameinfogameresults.push({
             playerid: gameresult.player.playerid,
             score: gameresult.score,
             position: gameresult.position
         });
     });
+    kpashigameinfo.gameresults = kpashigameinfogameresults;
     yield KpashiGameInfo.findOneAndUpdate({ id: kpashigame.id }, kpashigameinfo, {
         upsert: true
     });

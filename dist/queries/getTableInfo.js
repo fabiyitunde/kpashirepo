@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const kpashiTableInfo_1 = require("../models/kpashiTableInfo");
 const kpashiPlayer_1 = require("../models/kpashiPlayer");
+const linq = require("linq");
 const KpashiTableInfo = mongoose.model("KpashiTableInfo", kpashiTableInfo_1.KpashiTableInfoSchema);
 exports.getTableInfo = (tableid) => __awaiter(this, void 0, void 0, function* () {
     var newtableinfo = {};
@@ -24,20 +25,28 @@ exports.getTableInfo = (tableid) => __awaiter(this, void 0, void 0, function* ()
     newtableinfo.isOn = tableinfo.gameison;
     newtableinfo.createOn = tableinfo.createdon;
     var playerlist = tableinfo.playerlist;
+    var filterlist = linq
+        .from(playerlist)
+        .select(player => {
+        var ret = { id: player.playerid };
+        return ret;
+    })
+        .toArray();
+    var playerinfolist = yield kpashiPlayer_1.KpashiPlayer.find({
+        $or: [...filterlist]
+    });
     newtableinfo.membercount = playerlist.length;
     var memberlist = [];
     playerlist.forEach((player) => __awaiter(this, void 0, void 0, function* () {
-        kpashiPlayer_1.KpashiPlayer.findOne({ id: player.playerid }).then(doc => {
-            var playerinfo = doc;
-            var newplayer = {};
-            newplayer.id = player.playerid;
-            newplayer.fullname = playerinfo.fullname;
-            newplayer.position = player.sittingposition;
-            newplayer.unitbalance = player.creditbalance;
-            newplayer.photourl = playerinfo.photourl;
-            newplayer.lastactivitytime = playerinfo.lastactivitytime;
-            memberlist.push(newplayer);
-        });
+        var playerinfo = playerinfolist.find(a => a.id == player.playerid);
+        var newplayer = {};
+        newplayer.id = player.playerid;
+        newplayer.fullname = playerinfo.fullname;
+        newplayer.position = player.sittingposition;
+        newplayer.unitbalance = player.creditbalance;
+        newplayer.photourl = playerinfo.photourl;
+        newplayer.lastactivitytime = playerinfo.lastactivitytime;
+        memberlist.push(newplayer);
     }));
     newtableinfo.members = memberlist;
     return newtableinfo;

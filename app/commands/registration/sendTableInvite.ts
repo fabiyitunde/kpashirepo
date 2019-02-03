@@ -3,9 +3,7 @@ import { getKpashiTable } from "../../repositories/kpashiTableRepo";
 import { getTableInfo } from "../../queries/getTableInfo";
 import { getUserInfo } from "../../queries/getUserInfo";
 import * as postal from "postal";
-import * as datetime from "node-datetime";
-import uuid from "uuid/v5";
-import uniqid from "uniqid";
+
 import { postalChannels, postalTopics } from "../../param";
 export class sendTableInvite {
   hostuserid: string;

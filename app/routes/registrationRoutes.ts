@@ -16,6 +16,9 @@ export class registrationRoutes {
       .route("/registration/joinTable")
       .post(this.registrationController.joinTable);
     app
+      .route("/registration/topUpCredit")
+      .post(this.registrationController.topUpCredit);
+    app
       .route("/registration/getMyTableList/:userid")
       .get(this.registrationController.getMyTableList);
     app

@@ -8,5 +8,5 @@ export enum CardType {
   Seven = 7,
   Eight = 8,
   Nine = 9,
-  Tem = 10
+  Ten = 10
 }

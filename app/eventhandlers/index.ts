@@ -1,4 +1,5 @@
 import { clientSocketHandler } from "./clientSocketHandler";
-export const initHandlers = app => {
-  new clientSocketHandler(app);
+let clientsocket: clientSocketHandler;
+export const initHandlers = io => {
+  clientsocket = new clientSocketHandler(io);
 };

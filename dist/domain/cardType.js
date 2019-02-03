@@ -11,6 +11,6 @@ var CardType;
     CardType[CardType["Seven"] = 7] = "Seven";
     CardType[CardType["Eight"] = 8] = "Eight";
     CardType[CardType["Nine"] = 9] = "Nine";
-    CardType[CardType["Tem"] = 10] = "Tem";
+    CardType[CardType["Ten"] = 10] = "Ten";
 })(CardType = exports.CardType || (exports.CardType = {}));
 //# sourceMappingURL=cardType.js.map

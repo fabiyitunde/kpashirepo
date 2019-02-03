@@ -16,7 +16,7 @@ const KpashiTableInfo = mongoose.model("KpashiTableInfo", kpashiTableInfo_1.Kpas
 exports.getKpashiTable = (tableid) => __awaiter(this, void 0, void 0, function* () {
     var existingrec = yield KpashiTableInfo.findOne({ tableid: tableid });
     var returnobj = new kpashiTable_1.KpashiTable();
-    returnobj.gameisOn = existingrec.gameon;
+    returnobj.gameisOn = existingrec.gameison;
     returnobj.unitperround = existingrec.unitperround;
     returnobj.id = existingrec.tableid;
     var hostplayer = new playerDetail_1.PlayerDetail();
@@ -27,14 +27,16 @@ exports.getKpashiTable = (tableid) => __awaiter(this, void 0, void 0, function* 
     returnobj.currentGameId = existingrec.currentGameId;
     returnobj.createdon = existingrec.createdon;
     if (existingrec.playerlist) {
+        var playerlist = [];
         existingrec.playerlist.forEach(playerdetail => {
             var newplayerdetail = new playerDetail_1.PlayerDetail();
             newplayerdetail.creditbalance = playerdetail.creditbalance;
             newplayerdetail.playerid = playerdetail.playerid;
             newplayerdetail.playername = playerdetail.name;
             newplayerdetail.sittingposition = playerdetail.sittingposition;
-            returnobj.playerlist.push(newplayerdetail);
+            playerlist.push(newplayerdetail);
         });
+        returnobj.playerlist = playerlist;
     }
     return returnobj;
 });

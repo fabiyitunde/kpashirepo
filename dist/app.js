@@ -5,15 +5,14 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const index_1 = require("./routes/index");
-const index_2 = require("./eventhandlers/index");
 class App {
     constructor() {
         this.mongoUrl = "mongodb://localhost/kpashidatabase";
         this.app = express();
-        this.app.use(cors());
+        this.app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+        // initHandlers(this.app);
         this.config();
         index_1.initRoutes(this.app);
-        index_2.initHandlers(this.app);
         this.mongoSetup();
         console.log("Last Connect");
     }
