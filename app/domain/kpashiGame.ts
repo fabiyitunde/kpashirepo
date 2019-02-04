@@ -132,6 +132,7 @@ export class KpashiGame {
     cardtype: number,
     onGameEndCallback
   ) {
+    if (this.gamestatus == GameStatus.Finished) throw "Game Already Ended";
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     if (this.droppedcards.length == 0) {
       this.playcallcard(playerid, suittype, cardtype);
