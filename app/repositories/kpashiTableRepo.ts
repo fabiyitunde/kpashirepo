@@ -2,6 +2,7 @@ import * as mongoose from "mongoose";
 import { KpashiTable } from "../domain/kpashiTable";
 import { KpashiTableInfoSchema } from "../models/kpashiTableInfo";
 import { PlayerDetail } from "../domain/playerDetail";
+import * as linq from "linq";
 const KpashiTableInfo = mongoose.model(
   "KpashiTableInfo",
   KpashiTableInfoSchema
@@ -30,8 +31,18 @@ export const getKpashiTable = async (tableid: string): Promise<KpashiTable> => {
       newplayerdetail.lastactivity = playerdetail.lastactivity;
       playerlist.push(newplayerdetail);
     });
+
     returnobj.playerlist = playerlist;
   }
+  var playingqueue: { position: number; playerid: string }[] =
+    existingrec.playingqueue;
+  playingqueue = linq
+    .from(playingqueue)
+    .orderBy(a => a.position)
+    .toArray();
+  playingqueue.forEach(playerqueue => {
+    returnobj.playingqueue.enqueue(playerqueue.playerid);
+  });
   return returnobj;
 };
 
@@ -54,6 +65,17 @@ export const saveKpashiTable = async (
       playerlist.push(newrec);
     });
   }
+  var queuepositioncounter: number = 0;
+  var playingqueue: any[] = [];
+  while (kpashitable.playingqueue.length > 0) {
+    queuepositioncounter += 1;
+    var queueplayerid = kpashitable.playingqueue.dequeue();
+    playingqueue.push({
+      position: queuepositioncounter,
+      playerid: queueplayerid
+    });
+  }
+
   var newkpashitable: any = {};
   newkpashitable.tableid = kpashitable.id;
   newkpashitable.unitperround = kpashitable.unitperround;
@@ -63,6 +85,7 @@ export const saveKpashiTable = async (
   newkpashitable.createdon = kpashitable.createdon;
   newkpashitable.hostplayer = hostplayer;
   newkpashitable.playerlist = playerlist;
+  newkpashitable.playingqueue = playingqueue;
   await KpashiTableInfo.findOneAndUpdate(
     { tableid: kpashitable.id },
     newkpashitable,

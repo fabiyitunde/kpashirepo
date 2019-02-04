@@ -40,5 +40,8 @@ export const KpashiTableInfoSchema = new mongoose.Schema({
   createdon: { type: Date },
   playerlist: {
     type: [playerSchema]
+  },
+  playingqueue: {
+    type: [{ position: Number, playerid: String }]
   }
 });

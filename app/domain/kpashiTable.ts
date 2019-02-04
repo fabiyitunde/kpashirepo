@@ -3,6 +3,7 @@ import { KpashiGame } from "./kpashiGame";
 import * as linq from "linq";
 import { Player } from "./player";
 import { getRandomInt } from "../utilities/randomNumberGen";
+import { Queue } from "queue-typescript";
 export class KpashiTable {
   id: string;
   hostplayer: PlayerDetail = new PlayerDetail();
@@ -12,6 +13,7 @@ export class KpashiTable {
   currentGameId: string;
   description: string;
   createdon: Date;
+  playingqueue: Queue<string> = new Queue<string>();
   create(
     id: string,
     hostplayerid: string,
@@ -31,6 +33,7 @@ export class KpashiTable {
     this.unitperround = unitperround;
     this.playerlist.push(this.hostplayer);
     this.createdon = new Date();
+    this.playingqueue.enqueue(hostplayerid);
   }
   addplayer(playerid: string, fullname: string, creditvalue: number) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
@@ -48,6 +51,7 @@ export class KpashiTable {
     player.creditbalance = creditvalue;
     player.lastactivity = new Date();
     this.playerlist.push(player);
+    this.playingqueue.enqueue(playerid);
   }
   removeplayer(playerid: string) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
@@ -60,14 +64,23 @@ export class KpashiTable {
       a.sittingposition = a.sittingposition - 1;
       if (a.sittingposition == 0) a.sittingposition = this.playerlist.length;
     });
+    var temque: Queue<string> = new Queue<string>();
+    while (this.playingqueue.length > 0) {
+      var currentplayerid = this.playingqueue.dequeue();
+      if (currentplayerid == playerid) continue;
+      temque.enqueue(currentplayerid);
+    }
+    this.playingqueue = temque;
   }
   topupcredit(playerid: string, credit: number) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
     if (existingplayer == null || existingplayer == undefined) {
       if (this.hostplayer.playerid == playerid) {
-        this.hostplayer.creditbalance = credit;
-        this.hostplayer.sittingposition = this.playerlist.length + 1;
-        this.playerlist.push(this.hostplayer);
+        this.addplayer(
+          this.hostplayer.playerid,
+          this.hostplayer.playername,
+          credit
+        );
       }
     } else {
       existingplayer.creditbalance += credit;
@@ -88,13 +101,15 @@ export class KpashiTable {
     }
   }
   setnexttoplay() {
-    this.playerlist.forEach(element => {
-      if (element.sittingposition - 1 === 0) {
-        element.sittingposition = this.playerlist.length;
-      } else {
-        element.sittingposition -= 1;
-      }
-    });
+    var temque: Queue<string> = new Queue<string>();
+    var currentfirstToPlayid = this.playingqueue.front;
+    while (this.playingqueue.length > 0) {
+      var currentplayerid = this.playingqueue.dequeue();
+      if (currentplayerid == currentfirstToPlayid) continue;
+      temque.enqueue(currentplayerid);
+    }
+    temque.enqueue(currentfirstToPlayid);
+    this.playingqueue = temque;
   }
   gameEnded(kpashiGame: KpashiGame) {
     this.gameisOn = false;
@@ -144,18 +159,22 @@ export class KpashiTable {
     newgame.initialize(gameid, this.id, this.unitperround);
     this.gameisOn = true;
     this.currentGameId = gameid;
-    this.pickfirstToPlay();
-    this.playerlist.forEach(player => {
+    // this.pickfirstToPlay();
+    var sittingposition: number = 0;
+    for (let playerid of this.playingqueue) {
+      var player = this.playerlist.find(a => a.playerid == playerid);
       if (player.creditbalance >= this.unitperround) {
+        sittingposition += 1;
         var newplayer: Player = new Player();
         newplayer.creditbalance = player.creditbalance;
         newplayer.playerid = player.playerid;
         newplayer.playername = player.playername;
-        newplayer.sittingposition = player.sittingposition;
+        newplayer.sittingposition = sittingposition;
         newplayer.winposition = 0;
         newgame.enrollplayer(newplayer);
       }
-    });
+    }
+
     if (newgame.playerlist.length < 2) throw "players must be more than 1";
     return newgame;
   }
@@ -181,17 +200,20 @@ export class KpashiTable {
     newgame.initialize(gameid, this.id, this.unitperround);
     this.gameisOn = true;
     this.currentGameId = gameid;
-    this.playerlist.forEach(player => {
+    var sittingposition: number = 0;
+    for (let playeridinqueue of this.playingqueue) {
+      var player = this.playerlist.find(a => a.playerid == playeridinqueue);
       if (player.creditbalance >= this.unitperround) {
+        sittingposition += 1;
         var newplayer: Player = new Player();
         newplayer.creditbalance = player.creditbalance;
         newplayer.playerid = player.playerid;
         newplayer.playername = player.playername;
-        newplayer.sittingposition = player.sittingposition;
+        newplayer.sittingposition = sittingposition;
         newplayer.winposition = 0;
         newgame.enrollplayer(newplayer);
       }
-    });
+    }
     if (newgame.playerlist.length < 2) throw "players must be more than 1";
     return newgame;
   }
