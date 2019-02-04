@@ -192,10 +192,8 @@ export class KpashiTable {
   ): KpashiGame {
     if (this.gameisOn) throw "An Existing Game is Still InConclusive";
     if (this.playerlist.length <= 1) throw "Minimum Of Two players Required";
-    var existingmember = linq
-      .from(this.playerlist)
-      .firstOrDefault(a => a.playerid == playerid);
-    if (existingmember.sittingposition != 1) throw "its not your turn to play";
+    var nextplayerid = this.playingqueue.front;
+    if (nextplayerid != playerid) throw "its not your turn to play";
     var newgame: KpashiGame = new KpashiGame();
     newgame.initialize(gameid, this.id, this.unitperround);
     this.gameisOn = true;
