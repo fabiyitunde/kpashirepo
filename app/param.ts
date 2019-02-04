@@ -10,7 +10,8 @@ export const postalTopics = {
   firstGameStarted: "firstGameStarted",
   shufflingEnded: "shufflingEnded",
   dealingCardsComplete: "dealingCardsComplete",
-  cardDropped: "cardDropped"
+  cardDropped: "cardDropped",
+  newGameStarted: "newGameStarted"
 };
 
 export const clientSideHandlerAddresses = {
@@ -25,5 +26,6 @@ export const clientSideReducerActions = {
   firstGameStarted: "FIRSTGAMESTARTED",
   shufflingEnded: "SHUFFLINGENDED",
   dealingCardsComplete: "DEALINGCARDSCOMPLETE",
-  cardDropped: "CARDDROPPED"
+  cardDropped: "CARDDROPPED",
+  newGameStarted: "NEWGAMESTARTED"
 };

@@ -6,4 +6,5 @@ export const registerGameRoutes = app => {
   app.route("/game/shuffleCards").post(gameController.shuffleCards);
   app.route("/game/dealCards").post(gameController.dealCards);
   app.route("/game/dropCard").post(gameController.dropCard);
+  app.route("/game/startNewGame").post(gameController.startNewGame);
 };

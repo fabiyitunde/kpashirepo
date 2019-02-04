@@ -28,6 +28,7 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
   });
 
   gamedetails.id = gameid;
+  gamedetails.tableid = gameinfo.kpashitableid;
   gamedetails.tabledescription = tableinfo.description;
   gamedetails.hostname = tableinfo.hostname;
   gamedetails.unitsperhand = gameinfo.unitsperhand;

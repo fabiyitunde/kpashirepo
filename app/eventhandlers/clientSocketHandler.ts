@@ -42,6 +42,11 @@ export class clientSocketHandler {
         .then(() => {})
         .catch(err => {});
     });
+    channel.subscribe(postalTopics.newGameStarted, eventobj => {
+      this.onNewGameStarted(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
   }
   sendTableInvite(eventobj, io) {
     var { tableinfo, hostuserinfo, guestuserinfo } = eventobj;
@@ -183,6 +188,30 @@ export class clientSocketHandler {
       returnobj.reduceraction = clientSideReducerActions.cardDropped;
       var eventname = "userevent" + player.playerid;
 
+      io.emit(eventname, returnobj);
+    }
+  }
+  async onNewGameStarted(eventobj, io) {
+    var gameinfo: any = await getGameInfo(eventobj.gameid);
+    var playerlist: any[] = gameinfo.playerlist;
+    for (let index = 0; index < playerlist.length; index++) {
+      const player = playerlist[index];
+      if (player.playerid == eventobj.userinfo.id) continue;
+      var mygamedetails = await getMyGameDetails(
+        player.playerid,
+        eventobj.gameid
+      );
+      var returnobj: any = {};
+      returnobj.payload = mygamedetails;
+      returnobj.address = clientSideHandlerAddresses.gameViewOpened;
+      returnobj.source = eventobj.userinfo;
+      returnobj.description =
+        eventobj.userinfo.fullname +
+        " just Started a New Game with you included";
+      returnobj.time = new Date().toString();
+      returnobj.id = uuid(uniqid(), uuid.DNS);
+      returnobj.reduceraction = clientSideReducerActions.firstGameStarted;
+      var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }
   }

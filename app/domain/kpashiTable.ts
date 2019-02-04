@@ -25,6 +25,7 @@ export class KpashiTable {
     this.hostplayer.playerid = hostplayerid;
     this.hostplayer.playername = hostplayername;
     this.hostplayer.creditbalance = creditbalance;
+    this.hostplayer.lastactivity = new Date();
     this.id = id;
     this.description = description;
     this.unitperround = unitperround;
@@ -45,6 +46,7 @@ export class KpashiTable {
     player.playername = fullname;
     player.sittingposition = this.playerlist.length + 1;
     player.creditbalance = creditvalue;
+    player.lastactivity = new Date();
     this.playerlist.push(player);
   }
   removeplayer(playerid: string) {
@@ -61,7 +63,15 @@ export class KpashiTable {
   }
   topupcredit(playerid: string, credit: number) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
-    existingplayer.creditbalance += credit;
+    if (existingplayer == null || existingplayer == undefined) {
+      if (this.hostplayer.playerid == playerid) {
+        this.hostplayer.creditbalance = credit;
+        this.hostplayer.sittingposition = this.playerlist.length + 1;
+        this.playerlist.push(this.hostplayer);
+      }
+    } else {
+      existingplayer.creditbalance += credit;
+    }
   }
   shufflesittingpositions() {
     for (let position = 0; position < 200; position++) {
@@ -155,6 +165,7 @@ export class KpashiTable {
   }
   registerActivity(playerid: string) {
     var existingrec = this.playerlist.find(a => a.playerid == playerid);
+    existingrec.lastactivity = new Date();
   }
   createKpashiGameWithPlayerIdOfFirstPlayer(
     gameid: string,
@@ -167,9 +178,9 @@ export class KpashiTable {
       .firstOrDefault(a => a.playerid == playerid);
     if (existingmember.sittingposition != 1) throw "its not your turn to play";
     var newgame: KpashiGame = new KpashiGame();
+    newgame.initialize(gameid, this.id, this.unitperround);
     this.gameisOn = true;
     this.currentGameId = gameid;
-
     this.playerlist.forEach(player => {
       if (player.creditbalance >= this.unitperround) {
         var newplayer: Player = new Player();

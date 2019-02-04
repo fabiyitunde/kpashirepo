@@ -13,6 +13,9 @@ const playerSchema = new mongoose.Schema({
   },
   creditbalance: {
     type: Number
+  },
+  lastactivity: {
+    type: Date
   }
 });
 

@@ -46,7 +46,7 @@ export const getMyTableList = async userid => {
       newplayer.position = player.sittingposition;
       newplayer.unitbalance = player.creditbalance;
       newplayer.photourl = playerinfo.photourl;
-      newplayer.lastactivitytime = playerinfo.lastactivitytime;
+      newplayer.lastactivitytime = player.lastactivity;
       memberlist.push(newplayer);
     });
     newtableinfo.members = [...memberlist];

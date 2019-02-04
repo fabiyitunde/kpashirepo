@@ -5,6 +5,7 @@ import { getTableInfo } from "../queries/getTableInfo";
 import { shuffleCards } from "../commands/game/shuffleCards";
 import { dealCards } from "../commands/game/dealCards";
 import { dropCard } from "../commands/game/dropCard";
+import { startNewGame } from "../commands/game/startNewGame";
 export class GameController {
   public async startFirstGame(req: Request, res: Response) {
     try {
@@ -73,6 +74,17 @@ export class GameController {
         gameinfo: gameinfo
       };
       res.status(200).json(returnobj);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  }
+  public async startNewGame(req: Request, res: Response) {
+    try {
+      const { userid, tableid, gameid } = req.body;
+      await startNewGame(userid, tableid, gameid);
+      var gameinfo = await getMyGameDetails(userid, gameid);
+      res.status(200).json({ success: true, gameinfo: gameinfo });
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

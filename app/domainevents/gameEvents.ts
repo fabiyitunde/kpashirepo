@@ -35,3 +35,14 @@ export const raiseCardDroppedEvent = (gameid: string, userinfo: any) => {
   const channel = postal.channel(postalChannels.kpashiChannel);
   channel.publish(postalTopics.cardDropped, eventobj);
 };
+
+export const raiseNewGameStartedEvent = async (
+  gameid: string,
+  userinfo: any
+) => {
+  var eventobj: any = {};
+  eventobj.gameid = gameid;
+  eventobj.userinfo = userinfo;
+  const channel = postal.channel(postalChannels.kpashiChannel);
+  channel.publish(postalTopics.newGameStarted, eventobj);
+};

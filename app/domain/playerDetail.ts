@@ -3,4 +3,5 @@ export class PlayerDetail {
   sittingposition: number;
   playername: string;
   creditbalance: number;
+  lastactivity: Date;
 }
