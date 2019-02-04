@@ -10,10 +10,12 @@
     "dev": "ts-node ./app/server.ts",
     "start": "node ./dist/server.js",
     "prod": "npm run build && npm run start",
-    "dev:ts": "nodemon"
+    "dev:ts": "nodemon",
+    "heroku-postbuild": "tsc"
   },
   "engines": {
-    "node": "8.9.4"
+    "node": "8.9.4",
+    "npm": "6.5.0"
   },
   "author": "tunde fabiyi",
   "license": "ISC",
