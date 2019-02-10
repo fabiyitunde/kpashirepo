@@ -6,3 +6,9 @@ export const getUserInfo = async userid => {
 
   return userinfo;
 };
+
+export const getUserInfoByEmail = async email => {
+  var userinfo = await KpashiPlayer.findOne({ email: email });
+
+  return userinfo;
+};

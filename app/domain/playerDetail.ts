@@ -4,4 +4,5 @@ export class PlayerDetail {
   playername: string;
   creditbalance: number;
   lastactivity: Date;
+  readytoplay: boolean;
 }

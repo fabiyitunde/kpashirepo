@@ -6,6 +6,7 @@ import { shuffleCards } from "../commands/game/shuffleCards";
 import { dealCards } from "../commands/game/dealCards";
 import { dropCard } from "../commands/game/dropCard";
 import { startNewGame } from "../commands/game/startNewGame";
+import { iAmReadyToPlay } from "../commands/game/iAmReadyToPlay";
 export class GameController {
   public async startFirstGame(req: Request, res: Response) {
     try {
@@ -85,6 +86,17 @@ export class GameController {
       await startNewGame(userid, tableid, gameid);
       var gameinfo = await getMyGameDetails(userid, gameid);
       res.status(200).json({ success: true, gameinfo: gameinfo });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  }
+  public async iAmReadyToPlay(req: Request, res: Response) {
+    try {
+      const { userid, tableid } = req.body;
+      await iAmReadyToPlay(tableid, userid);
+      var tableinfo = await getTableInfo(tableid);
+      res.status(200).json({ success: true, tableinfo: tableinfo });
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

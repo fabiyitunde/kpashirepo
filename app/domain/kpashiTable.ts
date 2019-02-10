@@ -22,7 +22,6 @@ export class KpashiTable {
     creditbalance: number,
     description: string
   ) {
-    if (creditbalance < unitperround) throw "not enough credit to play";
     this.hostplayer.sittingposition = 1;
     this.hostplayer.playerid = hostplayerid;
     this.hostplayer.playername = hostplayername;
@@ -31,9 +30,8 @@ export class KpashiTable {
     this.id = id;
     this.description = description;
     this.unitperround = unitperround;
-    this.playerlist.push(this.hostplayer);
     this.createdon = new Date();
-    this.playingqueue.enqueue(hostplayerid);
+    this.addplayer(hostplayerid, hostplayername, creditbalance);
   }
   addplayer(playerid: string, fullname: string, creditvalue: number) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
@@ -50,6 +48,7 @@ export class KpashiTable {
     player.sittingposition = this.playerlist.length + 1;
     player.creditbalance = creditvalue;
     player.lastactivity = new Date();
+    player.readytoplay = true;
     this.playerlist.push(player);
     this.playingqueue.enqueue(playerid);
   }
@@ -118,6 +117,7 @@ export class KpashiTable {
     var amounttoshare = losers.count() * kpashiGame.unitsperhand;
     var amountforwinner = amounttoshare / winners.count();
     this.playerlist.forEach(player => {
+      player.readytoplay = false;
       var existingloser = losers.firstOrDefault(
         a => a.player.playerid == player.playerid
       );
@@ -135,6 +135,12 @@ export class KpashiTable {
       this.removeplayer(member.playerid);
     });
     if (listofmemberstoremove.count() == 0) this.setnexttoplay();
+  }
+  setReadinessToPlay(playerid: string) {
+    var existingplayer = this.playerlist.find(a => a.playerid == playerid);
+    if (existingplayer == null) throw "player does not exist";
+    existingplayer.readytoplay = true;
+    existingplayer.lastactivity = new Date();
   }
   pickfirstToPlay() {
     for (let index = 0; index < 200; index++) {
@@ -163,6 +169,8 @@ export class KpashiTable {
     var sittingposition: number = 0;
     for (let playerid of this.playingqueue) {
       var player = this.playerlist.find(a => a.playerid == playerid);
+      if (player.readytoplay == false)
+        throw player.playername + " Is not ready to play yet";
       if (player.creditbalance >= this.unitperround) {
         sittingposition += 1;
         var newplayer: Player = new Player();
@@ -201,6 +209,8 @@ export class KpashiTable {
     var sittingposition: number = 0;
     for (let playeridinqueue of this.playingqueue) {
       var player = this.playerlist.find(a => a.playerid == playeridinqueue);
+      if (player.readytoplay == false)
+        throw player.playername + " Is not ready to play yet";
       if (player.creditbalance >= this.unitperround) {
         sittingposition += 1;
         var newplayer: Player = new Player();

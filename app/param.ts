@@ -11,14 +11,16 @@ export const postalTopics = {
   shufflingEnded: "shufflingEnded",
   dealingCardsComplete: "dealingCardsComplete",
   cardDropped: "cardDropped",
-  newGameStarted: "newGameStarted"
+  newGameStarted: "newGameStarted",
+  iAmReadyToPlay: "iAmReadyToPlay"
 };
 
 export const clientSideHandlerAddresses = {
   tableinvite: "tableinvite",
   tableinviteResponse: "tableinviteResponse",
   tableInformationChanged: "tableInformationChanged",
-  gameViewOpened: "gameViewOpened"
+  gameViewOpened: "gameViewOpened",
+  infomation: "information"
 };
 export const clientSideReducerActions = {
   playerjoinedtable: "PLAYERJOINEDTABLE",
@@ -27,5 +29,6 @@ export const clientSideReducerActions = {
   shufflingEnded: "SHUFFLINGENDED",
   dealingCardsComplete: "DEALINGCARDSCOMPLETE",
   cardDropped: "CARDDROPPED",
-  newGameStarted: "NEWGAMESTARTED"
+  newGameStarted: "NEWGAMESTARTED",
+  iAmReadyToPlay: "IAMREADYTOPLAY"
 };

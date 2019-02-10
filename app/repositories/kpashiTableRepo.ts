@@ -29,6 +29,7 @@ export const getKpashiTable = async (tableid: string): Promise<KpashiTable> => {
       newplayerdetail.playername = playerdetail.name;
       newplayerdetail.sittingposition = playerdetail.sittingposition;
       newplayerdetail.lastactivity = playerdetail.lastactivity;
+      newplayerdetail.readytoplay = playerdetail.readytoplay;
       playerlist.push(newplayerdetail);
     });
 
@@ -62,6 +63,7 @@ export const saveKpashiTable = async (
       newrec.sittingposition = playerinfo.sittingposition;
       newrec.creditbalance = playerinfo.creditbalance;
       newrec.lastactivity = playerinfo.lastactivity;
+      newrec.readytoplay = playerinfo.readytoplay;
       playerlist.push(newrec);
     });
   }

@@ -13,7 +13,7 @@ export class createUser {
     photourl: string
   ) {
     try {
-      var existingrec = await KpashiPlayer.findOne({ id: userid });
+      var existingrec = await KpashiPlayer.findOne({ email: email });
       if (existingrec == undefined || existingrec == null) {
         var newPlayer = new KpashiPlayer({
           id: userid,
@@ -25,17 +25,18 @@ export class createUser {
         });
         this.payload = await newPlayer.save();
       } else {
-        console.log(existingrec);
-        this.payload = await KpashiPlayer.findOneAndUpdate(
-          { id: userid },
-          {
-            fullname: fullname,
-            email: email,
-            address: address,
-            phone: phone,
-            photourl: photourl
-          }
-        );
+        throw "email already registered";
+        // console.log(existingrec);
+        // this.payload = await KpashiPlayer.findOneAndUpdate(
+        //   { id: userid },
+        //   {
+        //     fullname: fullname,
+        //     email: email,
+        //     address: address,
+        //     phone: phone,
+        //     photourl: photourl
+        //   }
+        // );
       }
       this.isOk = true;
     } catch (error) {

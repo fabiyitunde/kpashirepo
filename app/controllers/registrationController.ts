@@ -7,7 +7,8 @@ import { getTableInfo } from "../queries/getTableInfo";
 import { sendTableInvite } from "../commands/registration/sendTableInvite";
 import { joinTable } from "../commands/registration/joinTable";
 import { topUpCredit } from "../commands/registration/topUpCredit";
-
+import { logIn } from "../commands/registration/loginIn";
+import { getUserInfoByEmail } from "../queries/getUserInfo";
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
     let cmd = new createUser();
@@ -102,6 +103,18 @@ export class RegistrationController {
       const resultlist = await getAllUsersList();
       res.status(200).json(resultlist);
     } catch (error) {
+      res.status(400).send(error);
+    }
+  }
+  public async logIn(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+
+      await logIn(email, password);
+      var userinfo = await getUserInfoByEmail(email);
+      res.status(200).json({ success: true, userinfo: userinfo });
+    } catch (error) {
+      console.log("Error Detected", error);
       res.status(400).send(error);
     }
   }

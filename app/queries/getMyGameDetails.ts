@@ -82,5 +82,13 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
       ? []
       : currentplayercards;
 
+  gamedetails.readytoplay = true;
+  var tableinfoplayerlist: any[] = tableinfo.playerlist;
+  var readytoplayPlayerRec = tableinfoplayerlist.find(
+    a => a.playerid == userid
+  );
+  if (readytoplayPlayerRec)
+    gamedetails.readytoplay = readytoplayPlayerRec.readytoplay;
+
   return gamedetails;
 };

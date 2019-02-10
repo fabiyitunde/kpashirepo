@@ -46,3 +46,13 @@ export const raiseNewGameStartedEvent = async (
   const channel = postal.channel(postalChannels.kpashiChannel);
   channel.publish(postalTopics.newGameStarted, eventobj);
 };
+export const raiseIAmReadyToPlayEvent = async (
+  tableinfo: any,
+  userinfo: any
+) => {
+  var eventobj: any = {};
+  eventobj.tableinfo = tableinfo;
+  eventobj.userinfo = userinfo;
+  const channel = postal.channel(postalChannels.kpashiChannel);
+  channel.publish(postalTopics.newGameStarted, eventobj);
+};

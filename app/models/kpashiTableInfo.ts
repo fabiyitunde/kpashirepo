@@ -14,6 +14,9 @@ const playerSchema = new mongoose.Schema({
   creditbalance: {
     type: Number
   },
+  readytoplay: {
+    type: Boolean
+  },
   lastactivity: {
     type: Date
   }
