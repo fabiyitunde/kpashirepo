@@ -25,18 +25,16 @@ export class createUser {
         });
         this.payload = await newPlayer.save();
       } else {
-        throw "email already registered";
-        // console.log(existingrec);
-        // this.payload = await KpashiPlayer.findOneAndUpdate(
-        //   { id: userid },
-        //   {
-        //     fullname: fullname,
-        //     email: email,
-        //     address: address,
-        //     phone: phone,
-        //     photourl: photourl
-        //   }
-        // );
+        this.payload = await KpashiPlayer.findOneAndUpdate(
+          { id: userid },
+          {
+            fullname: fullname,
+            email: email,
+            address: address,
+            phone: phone,
+            photourl: photourl
+          }
+        );
       }
       this.isOk = true;
     } catch (error) {

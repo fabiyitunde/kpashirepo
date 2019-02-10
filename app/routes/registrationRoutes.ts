@@ -25,5 +25,8 @@ export class registrationRoutes {
       .route("/registration/getAllUsersList")
       .get(this.registrationController.getAllUsersList);
     app.route("/registration/logIn").get(this.registrationController.logIn);
+    app
+      .route("/registration/registerUser")
+      .get(this.registrationController.registerUser);
   }
 }

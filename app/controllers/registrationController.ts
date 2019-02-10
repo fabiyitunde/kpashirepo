@@ -8,6 +8,7 @@ import { sendTableInvite } from "../commands/registration/sendTableInvite";
 import { joinTable } from "../commands/registration/joinTable";
 import { topUpCredit } from "../commands/registration/topUpCredit";
 import { logIn } from "../commands/registration/loginIn";
+import { registerUser } from "../commands/registration/registerUser";
 import { getUserInfoByEmail } from "../queries/getUserInfo";
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
@@ -111,6 +112,17 @@ export class RegistrationController {
       const { email, password } = req.body;
 
       await logIn(email, password);
+      var userinfo = await getUserInfoByEmail(email);
+      res.status(200).json({ success: true, userinfo: userinfo });
+    } catch (error) {
+      console.log("Error Detected", error);
+      res.status(400).send(error);
+    }
+  }
+  public async registerUser(req: Request, res: Response) {
+    try {
+      const { userid, address, email, fullname, phone } = req.body;
+      await registerUser(userid, email, address, fullname, phone);
       var userinfo = await getUserInfoByEmail(email);
       res.status(200).json({ success: true, userinfo: userinfo });
     } catch (error) {
