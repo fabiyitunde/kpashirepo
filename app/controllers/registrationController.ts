@@ -113,7 +113,16 @@ export class RegistrationController {
 
       await logIn(email, password);
       var userinfo = await getUserInfoByEmail(email);
-      res.status(200).json({ success: true, userinfo: userinfo });
+      const resultlist = await getMyTableList(userinfo.id);
+      const allusers = await getAllUsersList();
+      res
+        .status(200)
+        .json({
+          success: true,
+          userinfo: userinfo,
+          mytablelist: resultlist,
+          playerlist: allusers
+        });
     } catch (error) {
       console.log("Error Detected", error);
       res.status(400).send(error);

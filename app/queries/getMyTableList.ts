@@ -15,10 +15,14 @@ export const getMyTableList = async userid => {
   if (tablelist == null || tablelist.length == 0) return resultlist;
   for (let index = 0; index < tablelist.length; index++) {
     const tableinfo = tablelist[index];
+    var hostplayerinfo: any = await KpashiPlayer.findOne({
+      id: tableinfo.hostplayer.playerid
+    });
     var newtableinfo: any = {};
     newtableinfo.id = tableinfo.tableid;
     newtableinfo.description = tableinfo.description;
     newtableinfo.hostname = tableinfo.hostplayer.name;
+    newtableinfo.hostphotourl = hostplayerinfo.photourl;
     newtableinfo.hostplayerid = tableinfo.hostplayer.playerid;
     newtableinfo.oneroundunit = tableinfo.unitperround;
     newtableinfo.currentGameId = tableinfo.currentGameId;

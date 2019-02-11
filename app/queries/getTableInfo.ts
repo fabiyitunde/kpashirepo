@@ -10,9 +10,13 @@ const KpashiTableInfo = mongoose.model(
 export const getTableInfo = async tableid => {
   var newtableinfo: any = {};
   var tableinfo: any = await KpashiTableInfo.findOne({ tableid: tableid });
+  var hostplayerinfo: any = await KpashiPlayer.findOne({
+    id: tableinfo.hostplayer.playerid
+  });
   newtableinfo.id = tableinfo.tableid;
   newtableinfo.description = tableinfo.description;
   newtableinfo.hostname = tableinfo.hostplayer.name;
+  newtableinfo.hostphotourl = hostplayerinfo.photourl;
   newtableinfo.hostplayerid = tableinfo.hostplayer.playerid;
   newtableinfo.oneroundunit = tableinfo.unitperround;
   newtableinfo.currentGameId = tableinfo.currentGameId;
