@@ -20,8 +20,8 @@ export class KpashiGame {
   lastplayerposition: number;
   openedcards: Queue<Card> = new Queue<Card>();
   callingcard: Card;
-  droppedcards: any[] = [];
-  firsttopick = [];
+  droppedcards: [any, any][] = [];
+  firsttopick: [any, any] = [null, null];
   pickupsequence: Queue<any> = new Queue<any>();
   gameresults: GameResult[] = [];
 
@@ -165,7 +165,7 @@ export class KpashiGame {
         continue;
       if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
         continue;
-      if (dropedcarddetail[1].cardType == CardType.Ace) {
+      if (dropedcarddetail[1].cardType == 1) {
         this.firsttopick = dropedcarddetail;
       } else {
         if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
@@ -203,16 +203,14 @@ export class KpashiGame {
 
       var continuepicking: boolean = true;
       if (this.openedcards.length == 0) continue;
-      var nosOfAces = playertoupdate.cards.filter(
-        a => a.cardType === CardType.Ace
-      ).length;
+      var nosOfAces = playertoupdate.cards.filter(a => a.cardType == 1).length;
       if (nosOfAces == 2) continue;
       while (this.openedcards.length > 0 && continuepicking) {
         var cardontop = this.openedcards.front;
         var assumedcardlist: any[] = [...playertoupdate.cards, cardontop];
         let totalscore: number = 0;
         assumedcardlist.forEach(card => {
-          var cardpoint = card.cardType == CardType.Ace ? 11 : card.cardType;
+          var cardpoint = card.cardType == 1 ? 11 : card.cardType;
           totalscore += cardpoint;
         });
         if (totalscore <= 21) {

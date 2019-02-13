@@ -8,6 +8,7 @@ import { dropCard } from "../commands/game/dropCard";
 import { startNewGame } from "../commands/game/startNewGame";
 import { iAmReadyToPlay } from "../commands/game/iAmReadyToPlay";
 import { getNewGUID } from "../utilities/newGuid";
+import { getGameInfo } from "../queries/getGameInfo";
 export class GameController {
   public async startFirstGame(req: Request, res: Response) {
     try {
@@ -25,6 +26,7 @@ export class GameController {
       const { tableid, userid } = req.body;
       const tableinfo: any = await getTableInfo(tableid);
       var gameid = tableinfo.currentGameId;
+
       if (!tableinfo.currentGameId) {
         gameid = getNewGUID();
         await startFirstGame(userid, tableid, gameid);
