@@ -12,6 +12,7 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
   var tableinfo: any = await getTableInfo(gameinfo.kpashitableid);
   var playerlist: any[] = gameinfo.playerlist;
   var currentplayer: any = playerlist.find(a => a.playerid == userid);
+  var myinfo: any = await KpashiPlayer.findOne({ id: userid });
   var currentplayercards: any[] = currentplayer.cards;
   var openedcards: any[] = gameinfo.openedcards;
 
@@ -33,6 +34,8 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
   gamedetails.hostname = tableinfo.hostname;
   gamedetails.unitsperhand = gameinfo.unitsperhand;
   gamedetails.startedat = gameinfo.startedAt;
+  gamedetails.myname = myinfo.fullname;
+  gamedetails.myphotourl = myinfo.photourl;
   gamedetails.nextplayerdetail = {
     playerid: gameinfo.nextplayerdetail.playerid,
     playername: gameinfo.nextplayerdetail.playername

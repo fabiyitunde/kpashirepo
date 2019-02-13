@@ -7,6 +7,7 @@ import { dealCards } from "../commands/game/dealCards";
 import { dropCard } from "../commands/game/dropCard";
 import { startNewGame } from "../commands/game/startNewGame";
 import { iAmReadyToPlay } from "../commands/game/iAmReadyToPlay";
+import { getNewGUID } from "../utilities/newGuid";
 export class GameController {
   public async startFirstGame(req: Request, res: Response) {
     try {
@@ -23,8 +24,12 @@ export class GameController {
     try {
       const { tableid, userid } = req.body;
       const tableinfo: any = await getTableInfo(tableid);
-      if (!tableinfo.currentGameId) throw "No Current Game";
-      const gameinfo = await getMyGameDetails(userid, tableinfo.currentGameId);
+      var gameid = tableinfo.currentGameId;
+      if (!tableinfo.currentGameId) {
+        gameid = getNewGUID();
+        await startFirstGame(userid, tableid, gameid);
+      }
+      const gameinfo = await getMyGameDetails(userid, gameid);
       const returnobj: any = {
         success: true,
         gameinfo: gameinfo
