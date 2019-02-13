@@ -158,18 +158,19 @@ export class KpashiGame {
   }
   registerdroppedcard(player: any, card: any) {
     this.droppedcards.push([player, card]);
-    if (this.firsttopick[1].cardType == CardType.Ace) return;
-    for (let index = 0; index < this.droppedcards.length; index++) {
-      const dropedcarddetail = this.droppedcards[index];
-      if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
-        continue;
-      if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
-        continue;
-      if (dropedcarddetail[1].cardType == 1) {
-        this.firsttopick = dropedcarddetail;
-      } else {
-        if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
+    if (this.firsttopick[1].cardType != CardType.Ace) {
+      for (let index = 0; index < this.droppedcards.length; index++) {
+        const dropedcarddetail = this.droppedcards[index];
+        if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
+          continue;
+        if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
+          continue;
+        if (dropedcarddetail[1].cardType == 1) {
           this.firsttopick = dropedcarddetail;
+        } else {
+          if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
+            this.firsttopick = dropedcarddetail;
+        }
       }
     }
 
