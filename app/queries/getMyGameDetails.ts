@@ -89,6 +89,7 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
   gamedetails.readytoplay = "true";
   var tableinfoplayerlist: any[] = tableinfo.members;
   var readytoplayPlayerRec = tableinfoplayerlist.find(a => a.id == userid);
+  console.log("Trapping", readytoplayPlayerRec);
   if (readytoplayPlayerRec)
     gamedetails.readytoplay = readytoplayPlayerRec.readytoplay
       ? "true"
