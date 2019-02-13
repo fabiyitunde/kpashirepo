@@ -38,4 +38,18 @@ exports.raiseCardDroppedEvent = (gameid, userinfo) => {
     const channel = postal.channel(param_1.postalChannels.kpashiChannel);
     channel.publish(param_1.postalTopics.cardDropped, eventobj);
 };
+exports.raiseNewGameStartedEvent = (gameid, userinfo) => __awaiter(this, void 0, void 0, function* () {
+    var eventobj = {};
+    eventobj.gameid = gameid;
+    eventobj.userinfo = userinfo;
+    const channel = postal.channel(param_1.postalChannels.kpashiChannel);
+    channel.publish(param_1.postalTopics.newGameStarted, eventobj);
+});
+exports.raiseIAmReadyToPlayEvent = (tableinfo, userinfo) => __awaiter(this, void 0, void 0, function* () {
+    var eventobj = {};
+    eventobj.tableinfo = tableinfo;
+    eventobj.userinfo = userinfo;
+    const channel = postal.channel(param_1.postalChannels.kpashiChannel);
+    channel.publish(param_1.postalTopics.newGameStarted, eventobj);
+});
 //# sourceMappingURL=gameEvents.js.map

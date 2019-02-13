@@ -21,6 +21,7 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
     var tableinfo = yield getTableInfo_1.getTableInfo(gameinfo.kpashitableid);
     var playerlist = gameinfo.playerlist;
     var currentplayer = playerlist.find(a => a.playerid == userid);
+    var myinfo = yield kpashiPlayer_1.KpashiPlayer.findOne({ id: userid });
     var currentplayercards = currentplayer.cards;
     var openedcards = gameinfo.openedcards;
     var droppedcards = gameinfo.droppedcards;
@@ -35,10 +36,13 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         $or: [...filterlist]
     });
     gamedetails.id = gameid;
+    gamedetails.tableid = gameinfo.kpashitableid;
     gamedetails.tabledescription = tableinfo.description;
     gamedetails.hostname = tableinfo.hostname;
     gamedetails.unitsperhand = gameinfo.unitsperhand;
     gamedetails.startedat = gameinfo.startedAt;
+    gamedetails.myname = myinfo.fullname;
+    gamedetails.myphotourl = myinfo.photourl;
     gamedetails.nextplayerdetail = {
         playerid: gameinfo.nextplayerdetail.playerid,
         playername: gameinfo.nextplayerdetail.playername
@@ -68,6 +72,13 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
             dropedcard == null
                 ? null
                 : { suittype: dropedcard.suittype, cardtype: dropedcard.cardtype };
+        if (gameinfo.gamestatus == gamestatus_1.GameStatus.Finished) {
+            playerdetail.cards = player.cards;
+            playerdetail.score = gameresult.score;
+        }
+        else {
+            playerdetail.cards = null;
+        }
         playerDetails.push(playerdetail);
     }
     gamedetails.playerDetails = playerDetails;
@@ -83,6 +94,11 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         currentplayercards == null || currentplayercards.length == 0
             ? []
             : currentplayercards;
+    gamedetails.readytoplay = true;
+    var tableinfoplayerlist = tableinfo.playerlist;
+    var readytoplayPlayerRec = tableinfoplayerlist.find(a => a.playerid == userid);
+    if (readytoplayPlayerRec)
+        gamedetails.readytoplay = readytoplayPlayerRec.readytoplay;
     return gamedetails;
 });
 //# sourceMappingURL=getMyGameDetails.js.map

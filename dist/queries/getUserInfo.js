@@ -13,4 +13,8 @@ exports.getUserInfo = (userid) => __awaiter(this, void 0, void 0, function* () {
     var userinfo = yield kpashiPlayer_1.KpashiPlayer.findOne({ id: userid });
     return userinfo;
 });
+exports.getUserInfoByEmail = (email) => __awaiter(this, void 0, void 0, function* () {
+    var userinfo = yield kpashiPlayer_1.KpashiPlayer.findOne({ email: email });
+    return userinfo;
+});
 //# sourceMappingURL=getUserInfo.js.map

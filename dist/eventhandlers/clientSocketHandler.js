@@ -43,6 +43,11 @@ class clientSocketHandler {
                 .then(() => { })
                 .catch(err => { });
         });
+        channel.subscribe(param_1.postalTopics.newGameStarted, eventobj => {
+            this.onNewGameStarted(eventobj, io)
+                .then(() => { })
+                .catch(err => { });
+        });
     }
     sendTableInvite(eventobj, io) {
         var { tableinfo, hostuserinfo, guestuserinfo } = eventobj;
@@ -181,6 +186,30 @@ class clientSocketHandler {
                 returnobj.time = new Date().toString();
                 returnobj.id = uuid(uniqid(), uuid.DNS);
                 returnobj.reduceraction = param_1.clientSideReducerActions.cardDropped;
+                var eventname = "userevent" + player.playerid;
+                io.emit(eventname, returnobj);
+            }
+        });
+    }
+    onNewGameStarted(eventobj, io) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var gameinfo = yield getGameInfo_1.getGameInfo(eventobj.gameid);
+            var playerlist = gameinfo.playerlist;
+            for (let index = 0; index < playerlist.length; index++) {
+                const player = playerlist[index];
+                if (player.playerid == eventobj.userinfo.id)
+                    continue;
+                var mygamedetails = yield getMyGameDetails_1.getMyGameDetails(player.playerid, eventobj.gameid);
+                var returnobj = {};
+                returnobj.payload = mygamedetails;
+                returnobj.address = param_1.clientSideHandlerAddresses.gameViewOpened;
+                returnobj.source = eventobj.userinfo;
+                returnobj.description =
+                    eventobj.userinfo.fullname +
+                        " just Started a New Game with you included";
+                returnobj.time = new Date().toString();
+                returnobj.id = uuid(uniqid(), uuid.DNS);
+                returnobj.reduceraction = param_1.clientSideReducerActions.firstGameStarted;
                 var eventname = "userevent" + player.playerid;
                 io.emit(eventname, returnobj);
             }

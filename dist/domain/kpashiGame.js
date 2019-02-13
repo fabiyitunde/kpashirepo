@@ -116,6 +116,8 @@ class KpashiGame {
         this.lastplayerposition = existingplayer.sittingposition;
     }
     dropcard(playerid, suittype, cardtype, onGameEndCallback) {
+        if (this.gamestatus == gamestatus_1.GameStatus.Finished)
+            throw "Game Already Ended";
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         if (this.droppedcards.length == 0) {
             this.playcallcard(playerid, suittype, cardtype);

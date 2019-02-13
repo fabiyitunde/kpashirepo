@@ -1,5 +1,5 @@
-import uniqid from "uniqid";
-import uuid from "uuid/v5";
+import * as uniqid from "uniqid";
+import * as uuid from "uuid/v5";
 
 export const getNewGUID = () => {
   const uniqueid = uniqid();

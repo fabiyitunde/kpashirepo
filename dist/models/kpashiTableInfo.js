@@ -15,6 +15,12 @@ const playerSchema = new mongoose.Schema({
     },
     creditbalance: {
         type: Number
+    },
+    readytoplay: {
+        type: Boolean
+    },
+    lastactivity: {
+        type: Date
     }
 });
 exports.KpashiTableInfoSchema = new mongoose.Schema({
@@ -38,6 +44,9 @@ exports.KpashiTableInfoSchema = new mongoose.Schema({
     createdon: { type: Date },
     playerlist: {
         type: [playerSchema]
+    },
+    playingqueue: {
+        type: [{ position: Number, playerid: String }]
     }
 });
 //# sourceMappingURL=kpashiTableInfo.js.map

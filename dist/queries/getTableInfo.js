@@ -16,9 +16,13 @@ const KpashiTableInfo = mongoose.model("KpashiTableInfo", kpashiTableInfo_1.Kpas
 exports.getTableInfo = (tableid) => __awaiter(this, void 0, void 0, function* () {
     var newtableinfo = {};
     var tableinfo = yield KpashiTableInfo.findOne({ tableid: tableid });
+    var hostplayerinfo = yield kpashiPlayer_1.KpashiPlayer.findOne({
+        id: tableinfo.hostplayer.playerid
+    });
     newtableinfo.id = tableinfo.tableid;
     newtableinfo.description = tableinfo.description;
     newtableinfo.hostname = tableinfo.hostplayer.name;
+    newtableinfo.hostphotourl = hostplayerinfo.photourl;
     newtableinfo.hostplayerid = tableinfo.hostplayer.playerid;
     newtableinfo.oneroundunit = tableinfo.unitperround;
     newtableinfo.currentGameId = tableinfo.currentGameId;
@@ -46,6 +50,7 @@ exports.getTableInfo = (tableid) => __awaiter(this, void 0, void 0, function* ()
         newplayer.unitbalance = player.creditbalance;
         newplayer.photourl = playerinfo.photourl;
         newplayer.lastactivitytime = playerinfo.lastactivitytime;
+        newplayer.readytoplay = playerinfo.readytoplay;
         memberlist.push(newplayer);
     }));
     newtableinfo.members = memberlist;

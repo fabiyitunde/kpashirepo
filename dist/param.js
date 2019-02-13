@@ -11,13 +11,16 @@ exports.postalTopics = {
     firstGameStarted: "firstGameStarted",
     shufflingEnded: "shufflingEnded",
     dealingCardsComplete: "dealingCardsComplete",
-    cardDropped: "cardDropped"
+    cardDropped: "cardDropped",
+    newGameStarted: "newGameStarted",
+    iAmReadyToPlay: "iAmReadyToPlay"
 };
 exports.clientSideHandlerAddresses = {
     tableinvite: "tableinvite",
     tableinviteResponse: "tableinviteResponse",
     tableInformationChanged: "tableInformationChanged",
-    gameViewOpened: "gameViewOpened"
+    gameViewOpened: "gameViewOpened",
+    infomation: "information"
 };
 exports.clientSideReducerActions = {
     playerjoinedtable: "PLAYERJOINEDTABLE",
@@ -25,6 +28,8 @@ exports.clientSideReducerActions = {
     firstGameStarted: "FIRSTGAMESTARTED",
     shufflingEnded: "SHUFFLINGENDED",
     dealingCardsComplete: "DEALINGCARDSCOMPLETE",
-    cardDropped: "CARDDROPPED"
+    cardDropped: "CARDDROPPED",
+    newGameStarted: "NEWGAMESTARTED",
+    iAmReadyToPlay: "IAMREADYTOPLAY"
 };
 //# sourceMappingURL=param.js.map

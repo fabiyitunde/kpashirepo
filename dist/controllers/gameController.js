@@ -14,6 +14,9 @@ const getTableInfo_1 = require("../queries/getTableInfo");
 const shuffleCards_1 = require("../commands/game/shuffleCards");
 const dealCards_1 = require("../commands/game/dealCards");
 const dropCard_1 = require("../commands/game/dropCard");
+const startNewGame_1 = require("../commands/game/startNewGame");
+const iAmReadyToPlay_1 = require("../commands/game/iAmReadyToPlay");
+const newGuid_1 = require("../utilities/newGuid");
 class GameController {
     startFirstGame(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -34,9 +37,12 @@ class GameController {
             try {
                 const { tableid, userid } = req.body;
                 const tableinfo = yield getTableInfo_1.getTableInfo(tableid);
-                if (!tableinfo.currentGameId)
-                    throw "No Current Game";
-                const gameinfo = yield getMyGameDetails_1.getMyGameDetails(userid, tableinfo.currentGameId);
+                var gameid = tableinfo.currentGameId;
+                if (!tableinfo.currentGameId) {
+                    gameid = newGuid_1.getNewGUID();
+                    yield startFirstGame_1.startFirstGame(userid, tableid, gameid);
+                }
+                const gameinfo = yield getMyGameDetails_1.getMyGameDetails(userid, gameid);
                 const returnobj = {
                     success: true,
                     gameinfo: gameinfo
@@ -96,6 +102,34 @@ class GameController {
                     gameinfo: gameinfo
                 };
                 res.status(200).json(returnobj);
+            }
+            catch (error) {
+                console.log(error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    startNewGame(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userid, tableid, gameid } = req.body;
+                yield startNewGame_1.startNewGame(userid, tableid, gameid);
+                var gameinfo = yield getMyGameDetails_1.getMyGameDetails(userid, gameid);
+                res.status(200).json({ success: true, gameinfo: gameinfo });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    iAmReadyToPlay(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userid, tableid } = req.body;
+                yield iAmReadyToPlay_1.iAmReadyToPlay(tableid, userid);
+                var tableinfo = yield getTableInfo_1.getTableInfo(tableid);
+                res.status(200).json({ success: true, tableinfo: tableinfo });
             }
             catch (error) {
                 console.log(error);

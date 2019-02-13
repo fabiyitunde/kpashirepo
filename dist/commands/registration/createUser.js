@@ -18,7 +18,7 @@ class createUser {
     createUser(userid, email, address, fullname, phone, photourl) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                var existingrec = yield kpashiPlayer_1.KpashiPlayer.findOne({ id: userid });
+                var existingrec = yield kpashiPlayer_1.KpashiPlayer.findOne({ email: email });
                 if (existingrec == undefined || existingrec == null) {
                     var newPlayer = new kpashiPlayer_1.KpashiPlayer({
                         id: userid,
@@ -31,7 +31,6 @@ class createUser {
                     this.payload = yield newPlayer.save();
                 }
                 else {
-                    console.log(existingrec);
                     this.payload = yield kpashiPlayer_1.KpashiPlayer.findOneAndUpdate({ id: userid }, {
                         fullname: fullname,
                         email: email,

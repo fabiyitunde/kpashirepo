@@ -16,6 +16,9 @@ const getTableInfo_1 = require("../queries/getTableInfo");
 const sendTableInvite_1 = require("../commands/registration/sendTableInvite");
 const joinTable_1 = require("../commands/registration/joinTable");
 const topUpCredit_1 = require("../commands/registration/topUpCredit");
+const loginIn_1 = require("../commands/registration/loginIn");
+const registerUser_1 = require("../commands/registration/registerUser");
+const getUserInfo_1 = require("../queries/getUserInfo");
 class RegistrationController {
     createuser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -118,6 +121,43 @@ class RegistrationController {
                 res.status(200).json(resultlist);
             }
             catch (error) {
+                res.status(400).send(error);
+            }
+        });
+    }
+    logIn(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, password } = req.body;
+                yield loginIn_1.logIn(email, password);
+                var userinfo = yield getUserInfo_1.getUserInfoByEmail(email);
+                const resultlist = yield getMyTableList_1.getMyTableList(userinfo.id);
+                const allusers = yield getAllUsersList_1.getAllUsersList();
+                res
+                    .status(200)
+                    .json({
+                    success: true,
+                    userinfo: userinfo,
+                    mytablelist: resultlist,
+                    playerlist: allusers
+                });
+            }
+            catch (error) {
+                console.log("Error Detected", error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    registerUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userid, address, email, fullname, phone } = req.body;
+                yield registerUser_1.registerUser(userid, email, address, fullname, phone);
+                var userinfo = yield getUserInfo_1.getUserInfoByEmail(email);
+                res.status(200).json({ success: true, userinfo: userinfo });
+            }
+            catch (error) {
+                console.log("Error Detected", error);
                 res.status(400).send(error);
             }
         });
