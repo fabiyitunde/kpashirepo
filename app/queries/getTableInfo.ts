@@ -44,7 +44,7 @@ export const getTableInfo = async tableid => {
     newplayer.unitbalance = player.creditbalance;
     newplayer.photourl = playerinfo.photourl;
     newplayer.lastactivitytime = playerinfo.lastactivitytime;
-    newplayer.readytoplay = playerinfo.readytoplay;
+    newplayer.readytoplay = player.readytoplay;
     memberlist.push(newplayer);
   });
   newtableinfo.members = memberlist;
