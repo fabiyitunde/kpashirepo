@@ -87,7 +87,8 @@ export class GameController {
   }
   public async startNewGame(req: Request, res: Response) {
     try {
-      const { userid, tableid, gameid } = req.body;
+      const { userid, tableid } = req.body;
+      const gameid = getNewGUID();
       await startNewGame(userid, tableid, gameid);
       var gameinfo = await getMyGameDetails(userid, gameid);
       res.status(200).json({ success: true, gameinfo: gameinfo });
