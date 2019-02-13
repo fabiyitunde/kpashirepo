@@ -102,7 +102,11 @@ export class GameController {
       const { userid, tableid } = req.body;
       await iAmReadyToPlay(tableid, userid);
       var tableinfo = await getTableInfo(tableid);
-      res.status(200).json({ success: true, tableinfo: tableinfo });
+      var gameid = tableinfo.currentGameId;
+      var gameinfo = await getMyGameDetails(userid, gameid);
+      res
+        .status(200)
+        .json({ success: true, tableinfo: tableinfo, gameinfo: gameinfo });
     } catch (error) {
       console.log(error);
       res.status(400).send(error);
