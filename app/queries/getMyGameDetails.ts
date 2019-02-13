@@ -91,7 +91,7 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
   var readytoplayPlayerRec = tableinfoplayerlist.find(a => a.id == userid);
   if (readytoplayPlayerRec)
     gamedetails.readytoplay =
-      readytoplayPlayerRec.readytoplay === true ? "true" : "false";
+      new Boolean(readytoplayPlayerRec.readytoplay) == true ? "true" : "false";
 
   return gamedetails;
 };
