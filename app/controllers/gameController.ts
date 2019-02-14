@@ -77,7 +77,7 @@ export class GameController {
       const { gameid, userid, suittype, cardtype } = req.body;
       await dropCard(gameid, userid, suittype, cardtype);
       const gameinfo = await getMyGameDetails(userid, gameid);
-      const tableinfo = await getTableInfo(gameid);
+      const tableinfo = await getTableInfo(gameinfo.tableid);
       const returnobj: any = {
         success: true,
         gameinfo: gameinfo,
