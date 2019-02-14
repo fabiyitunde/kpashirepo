@@ -24,8 +24,8 @@ export async function dropCard(
     table.registerActivity(userid);
     if (gamehasended) table.gameEnded(game);
   });
-  var tableinfo = await getTableInfo(game.kpashitableid);
   await saveKpashiTable(table);
   await saveKpashiGame(game);
+  var tableinfo = await getTableInfo(game.kpashitableid);
   raiseCardDroppedEvent(gameid, userinfo, tableinfo);
 }
