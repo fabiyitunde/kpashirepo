@@ -5,6 +5,7 @@ import {
 import { KpashiGame } from "./../../domain/kpashiGame";
 import { KpashiTable } from "../../domain/kpashiTable";
 import { getUserInfo } from "../../queries/getUserInfo";
+import { getTableInfo } from "../../queries/getTableInfo";
 import {
   getKpashiTable,
   saveKpashiTable
@@ -23,8 +24,8 @@ export async function dropCard(
     table.registerActivity(userid);
     if (gamehasended) table.gameEnded(game);
   });
-
+  var tableinfo = await getTableInfo(game.kpashitableid);
   await saveKpashiTable(table);
   await saveKpashiGame(game);
-  raiseCardDroppedEvent(gameid, userinfo);
+  raiseCardDroppedEvent(gameid, userinfo, tableinfo);
 }

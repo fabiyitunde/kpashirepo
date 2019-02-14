@@ -169,6 +169,7 @@ export class clientSocketHandler {
   }
   async onCardDropped(eventobj, io) {
     var gameinfo: any = await getGameInfo(eventobj.gameid);
+
     var playerlist: any[] = gameinfo.playerlist;
     for (let index = 0; index < playerlist.length; index++) {
       const player = playerlist[index];
@@ -179,6 +180,7 @@ export class clientSocketHandler {
       );
       var returnobj: any = {};
       returnobj.payload = mygamedetails;
+      returnobj.tableinfo = eventobj.tableinfo;
       returnobj.address = clientSideHandlerAddresses.gameViewOpened;
       returnobj.source = eventobj.userinfo;
       returnobj.description =

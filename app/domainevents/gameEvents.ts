@@ -28,10 +28,15 @@ export const raiseDealingCardsCompleteEndedEvent = (
   const channel = postal.channel(postalChannels.kpashiChannel);
   channel.publish(postalTopics.dealingCardsComplete, eventobj);
 };
-export const raiseCardDroppedEvent = (gameid: string, userinfo: any) => {
+export const raiseCardDroppedEvent = (
+  gameid: string,
+  userinfo: any,
+  tableinfo: any
+) => {
   var eventobj: any = {};
   eventobj.gameid = gameid;
   eventobj.userinfo = userinfo;
+  eventobj.tableinfo = tableinfo;
   const channel = postal.channel(postalChannels.kpashiChannel);
   channel.publish(postalTopics.cardDropped, eventobj);
 };
