@@ -88,6 +88,13 @@ export class KpashiGame {
       this.playingcards.push(shuffledcards[stackposition]);
       this.deckofcards.enqueue(shuffledcards[stackposition]);
     }
+    var tempdeck = new Queue<Card>();
+    do {
+      var currentcard = this.deckofcards.dequeue();
+      if (currentcard.cardType == 2) continue;
+      tempdeck.enqueue(currentcard);
+    } while (this.deckofcards.length > 0);
+    this.deckofcards = tempdeck;
   }
   dealcards(playerid: string) {
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
