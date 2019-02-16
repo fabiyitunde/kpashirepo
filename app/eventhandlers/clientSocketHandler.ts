@@ -47,6 +47,11 @@ export class clientSocketHandler {
         .then(() => {})
         .catch(err => {});
     });
+    channel.subscribe(postalTopics.currentGameCancelled, eventobj => {
+      this.onCurrentGameCancelled(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
   }
   sendTableInvite(eventobj, io) {
     var { tableinfo, hostuserinfo, guestuserinfo } = eventobj;
@@ -213,6 +218,34 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideReducerActions.firstGameStarted;
+      var eventname = "userevent" + player.playerid;
+      io.emit(eventname, returnobj);
+    }
+  }
+  async onCurrentGameCancelled(eventobj, io) {
+    var gameinfo: any = await getGameInfo(eventobj.gameid);
+    var playerlist: any[] = gameinfo.playerlist;
+    for (let index = 0; index < playerlist.length; index++) {
+      const player = playerlist[index];
+      if (player.playerid == eventobj.userinfo.id) continue;
+      var mygamedetails = await getMyGameDetails(
+        player.playerid,
+        eventobj.gameid
+      );
+      var returnobj: any = {};
+      returnobj.payload = {
+        gameinfo: mygamedetails,
+        tableinfo: eventobj.tableinfo
+      };
+      returnobj.address = clientSideHandlerAddresses.currentGameCancelled;
+      returnobj.source = eventobj.userinfo;
+      returnobj.description =
+        eventobj.userinfo.fullname +
+        " just Cancelled Current Game on " +
+        eventobj.tableinfo.description;
+      returnobj.time = new Date().toString();
+      returnobj.id = uuid(uniqid(), uuid.DNS);
+      returnobj.reduceraction = clientSideHandlerAddresses.currentGameCancelled;
       var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }

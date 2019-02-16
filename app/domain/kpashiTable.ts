@@ -225,4 +225,10 @@ export class KpashiTable {
     if (newgame.playerlist.length < 2) throw "players must be more than 1";
     return newgame;
   }
+  cancelCurrentGame(game: KpashiGame, userid: string) {
+    if (this.currentGameId != game.id) throw "cannot cancel this game";
+    if (userid != this.hostplayer.playerid) throw "only host can cancel games";
+    game.cancellGame();
+    this.gameisOn == false;
+  }
 }

@@ -139,6 +139,7 @@ export class KpashiGame {
     cardtype: number,
     onGameEndCallback
   ) {
+    if (this.gamestatus == GameStatus.Cancelled) throw "Game Already Cancelled";
     if (this.gamestatus == GameStatus.Finished) throw "Game Already Ended";
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     if (this.droppedcards.length == 0) {
@@ -272,5 +273,10 @@ export class KpashiGame {
         ? this.lastplayerposition
         : this.lastplayerposition + 1;
     return this.playerlist.find(a => a.sittingposition == nextplayerposition);
+  }
+  cancellGame() {
+    if (this.gamestatus != GameStatus.Started)
+      throw "only started games can be cancelled";
+    this.gamestatus = GameStatus.Cancelled;
   }
 }

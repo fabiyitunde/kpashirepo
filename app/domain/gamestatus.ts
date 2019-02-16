@@ -3,5 +3,6 @@ export enum GameStatus {
   ShufflingCards = 2,
   DealingCards = 3,
   Started = 4,
-  Finished = 5
+  Finished = 5,
+  Cancelled = 6
 }

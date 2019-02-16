@@ -8,4 +8,5 @@ export const registerGameRoutes = app => {
   app.route("/game/dropCard").post(gameController.dropCard);
   app.route("/game/startNewGame").post(gameController.startNewGame);
   app.route("/game/iAmReadyToPlay").post(gameController.iAmReadyToPlay);
+  app.route("/game/cancelCurrentGame").post(gameController.cancelCurrentGame);
 };

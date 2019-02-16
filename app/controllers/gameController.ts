@@ -9,6 +9,7 @@ import { startNewGame } from "../commands/game/startNewGame";
 import { iAmReadyToPlay } from "../commands/game/iAmReadyToPlay";
 import { getNewGUID } from "../utilities/newGuid";
 import { getGameInfo } from "../queries/getGameInfo";
+import { cancelCurrentGame } from "../commands/game/cancelCurrentGame";
 export class GameController {
   public async startFirstGame(req: Request, res: Response) {
     try {
@@ -105,6 +106,21 @@ export class GameController {
     try {
       const { userid, tableid } = req.body;
       await iAmReadyToPlay(tableid, userid);
+      var tableinfo = await getTableInfo(tableid);
+      var gameid = tableinfo.currentGameId;
+      var gameinfo = await getMyGameDetails(userid, gameid);
+      res
+        .status(200)
+        .json({ success: true, tableinfo: tableinfo, gameinfo: gameinfo });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  }
+  public async cancelCurrentGame(req: Request, res: Response) {
+    try {
+      const { userid, tableid } = req.body;
+      await cancelCurrentGame(tableid, userid);
       var tableinfo = await getTableInfo(tableid);
       var gameid = tableinfo.currentGameId;
       var gameinfo = await getMyGameDetails(userid, gameid);

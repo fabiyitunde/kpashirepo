@@ -12,7 +12,8 @@ export const postalTopics = {
   dealingCardsComplete: "dealingCardsComplete",
   cardDropped: "cardDropped",
   newGameStarted: "newGameStarted",
-  iAmReadyToPlay: "iAmReadyToPlay"
+  iAmReadyToPlay: "iAmReadyToPlay",
+  currentGameCancelled: "currentGameCancelled"
 };
 
 export const clientSideHandlerAddresses = {
@@ -20,7 +21,8 @@ export const clientSideHandlerAddresses = {
   tableinviteResponse: "tableinviteResponse",
   tableInformationChanged: "tableInformationChanged",
   gameViewOpened: "gameViewOpened",
-  infomation: "information"
+  infomation: "information",
+  currentGameCancelled: "currentGameCancelled"
 };
 export const clientSideReducerActions = {
   playerjoinedtable: "PLAYERJOINEDTABLE",

@@ -61,3 +61,16 @@ export const raiseIAmReadyToPlayEvent = async (
   const channel = postal.channel(postalChannels.kpashiChannel);
   channel.publish(postalTopics.newGameStarted, eventobj);
 };
+
+export const raiseCurrentGameCancelledEvent = (
+  tableinfo: any,
+  userinfo: any,
+  gameid: string
+) => {
+  var eventobj: any = {};
+  eventobj.tableinfo = tableinfo;
+  eventobj.userinfo = userinfo;
+  eventobj.gameid = gameid;
+  const channel = postal.channel(postalChannels.kpashiChannel);
+  channel.publish(postalTopics.currentGameCancelled, eventobj);
+};
