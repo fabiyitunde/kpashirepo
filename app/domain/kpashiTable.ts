@@ -230,6 +230,6 @@ export class KpashiTable {
     if (this.currentGameId != game.id) throw "cannot cancel this game";
     if (userid != this.hostplayer.playerid) throw "only host can cancel games";
     game.cancellGame();
-    this.gameisOn == false;
+    this.gameisOn = false;
   }
 }
