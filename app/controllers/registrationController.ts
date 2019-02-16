@@ -10,6 +10,7 @@ import { topUpCredit } from "../commands/registration/topUpCredit";
 import { logIn } from "../commands/registration/loginIn";
 import { registerUser } from "../commands/registration/registerUser";
 import { getUserInfoByEmail } from "../queries/getUserInfo";
+import { registerUserForNotifications } from "../utilities/pushNotificationsProvider";
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
     let cmd = new createUser();
@@ -115,14 +116,12 @@ export class RegistrationController {
       var userinfo = await getUserInfoByEmail(email);
       const resultlist = await getMyTableList(userinfo.id);
       const allusers = await getAllUsersList();
-      res
-        .status(200)
-        .json({
-          success: true,
-          userinfo: userinfo,
-          mytablelist: resultlist,
-          playerlist: allusers
-        });
+      res.status(200).json({
+        success: true,
+        userinfo: userinfo,
+        mytablelist: resultlist,
+        playerlist: allusers
+      });
     } catch (error) {
       console.log("Error Detected", error);
       res.status(400).send(error);
@@ -134,6 +133,17 @@ export class RegistrationController {
       await registerUser(userid, email, address, fullname, phone);
       var userinfo = await getUserInfoByEmail(email);
       res.status(200).json({ success: true, userinfo: userinfo });
+    } catch (error) {
+      console.log("Error Detected", error);
+      res.status(400).send(error);
+    }
+  }
+  public async registerNotificationToken(req: Request, res: Response) {
+    try {
+      const { userid, tokenid } = req.body;
+      await registerUserForNotifications(userid, tokenid);
+
+      res.status(200).json({ success: true });
     } catch (error) {
       console.log("Error Detected", error);
       res.status(400).send(error);

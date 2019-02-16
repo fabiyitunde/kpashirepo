@@ -27,6 +27,9 @@ export class registrationRoutes {
     app.route("/registration/logIn").post(this.registrationController.logIn);
     app
       .route("/registration/registerUser")
-      .get(this.registrationController.registerUser);
+      .post(this.registrationController.registerUser);
+    app
+      .route("/registration/registerNotificationToken")
+      .post(this.registrationController.registerNotificationToken);
   }
 }
