@@ -137,6 +137,7 @@ export class KpashiTable {
     if (listofmemberstoremove.count() == 0) this.setnexttoplay();
   }
   setReadinessToPlay(playerid: string) {
+    if (this.gameisOn) throw "game is still on";
     var existingplayer = this.playerlist.find(a => a.playerid == playerid);
     if (existingplayer == null) throw "player does not exist";
     existingplayer.readytoplay = true;

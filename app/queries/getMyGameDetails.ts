@@ -64,7 +64,10 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
       dropedcard == null
         ? null
         : { suittype: dropedcard.suittype, cardtype: dropedcard.cardtype };
-    if (gameinfo.gamestatus == GameStatus.Finished) {
+    if (
+      gameinfo.gamestatus == GameStatus.Finished ||
+      gameinfo.gamestatus == GameStatus.Cancelled
+    ) {
       playerdetail.cards = player.cards;
       playerdetail.score = gameresult.score;
     } else {
