@@ -69,7 +69,8 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
       gameinfo.gamestatus == GameStatus.Cancelled
     ) {
       playerdetail.cards = player.cards;
-      playerdetail.score = gameresult.score;
+      playerdetail.score =
+        gameinfo.gamestatus == GameStatus.Finished ? gameresult.score : 0;
     } else {
       playerdetail.cards = null;
     }
