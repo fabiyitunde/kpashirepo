@@ -233,10 +233,8 @@ export class clientSocketHandler {
         eventobj.gameid
       );
       var returnobj: any = {};
-      returnobj.payload = {
-        gameinfo: mygamedetails,
-        tableinfo: eventobj.tableinfo
-      };
+      returnobj.payload = mygamedetails;
+      returnobj.tableinfo = eventobj.tableinfo;
       returnobj.address = clientSideHandlerAddresses.currentGameCancelled;
       returnobj.source = eventobj.userinfo;
       returnobj.description =
