@@ -31,5 +31,8 @@ export class registrationRoutes {
     app
       .route("/registration/registerNotificationToken")
       .post(this.registrationController.registerNotificationToken);
+    app
+      .route("/registration/removePlayerFromTable")
+      .post(this.registrationController.removePlayerFromTable);
   }
 }

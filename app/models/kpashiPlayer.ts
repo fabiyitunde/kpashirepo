@@ -29,6 +29,9 @@ export const KpashiPlayer = mongoose.model(
     lastactivitytime: {
       type: Date,
       default: Date.now
+    },
+    availablecredit: {
+      type: Number
     }
   })
 );

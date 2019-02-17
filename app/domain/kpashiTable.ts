@@ -52,6 +52,20 @@ export class KpashiTable {
     this.playerlist.push(player);
     this.playingqueue.enqueue(playerid);
   }
+  removePlayerFromTable(
+    playertoRemoveid: string,
+    hostplayerid: string,
+    balanceupdatecallback
+  ) {
+    if (this.hostplayer.playerid != hostplayerid)
+      throw "only the table host can remove a player";
+    var playertoremove = this.playerlist.find(
+      a => a.playerid == playertoRemoveid
+    );
+    if (playertoremove == null) throw "player not found";
+    this.removeplayer(playertoRemoveid);
+    balanceupdatecallback(playertoremove.creditbalance);
+  }
   removeplayer(playerid: string) {
     var existingplayer = this.playerlist.find(p => p.playerid === playerid);
     if (!existingplayer || existingplayer === undefined) {

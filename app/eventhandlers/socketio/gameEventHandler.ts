@@ -7,21 +7,13 @@ import {
   postalTopics,
   clientSideHandlerAddresses,
   clientSideReducerActions
-} from "../param";
-import { getGameInfo } from "../queries/getGameInfo";
-import { getMyGameDetails } from "../queries/getMyGameDetails";
+} from "../../param";
+import { getGameInfo } from "../../queries/getGameInfo";
+import { getMyGameDetails } from "../../queries/getMyGameDetails";
 export class clientSocketHandler {
   constructor(io) {
     const channel = postal.channel(postalChannels.kpashiChannel);
-    channel.subscribe(postalTopics.tableInvitation, eventobj => {
-      this.sendTableInvite(eventobj, io);
-    });
-    channel.subscribe(postalTopics.tableInvitationAcceptance, eventobj =>
-      this.sendTableInvitationAcceptance(eventobj, io)
-    );
-    channel.subscribe(postalTopics.playertoppedUpCredit, eventobj =>
-      this.onClientToppedUpCredit(eventobj, io)
-    );
+
     channel.subscribe(postalTopics.firstGameStarted, eventobj => {
       this.onFirstGameStarted(eventobj, io)
         .then(() => {})
@@ -53,55 +45,7 @@ export class clientSocketHandler {
         .catch(err => {});
     });
   }
-  sendTableInvite(eventobj, io) {
-    var { tableinfo, hostuserinfo, guestuserinfo } = eventobj;
-    var returnobj: any = {};
-    returnobj.payload = tableinfo;
-    returnobj.address = clientSideHandlerAddresses.tableinvite;
-    returnobj.source = hostuserinfo;
-    returnobj.description = "Table Invitation Needs Your Attention";
-    returnobj.time = new Date().toString();
-    const uniqueid = uniqid();
-    returnobj.id = uuid(uniqueid, uuid.DNS);
-    var eventname = "userevent" + guestuserinfo.id;
-    io.emit(eventname, returnobj);
-  }
-  sendTableInvitationAcceptance(eventobj, io) {
-    var { tableinfo, userinfo } = eventobj;
-    var members: any[] = tableinfo.members;
-    members.forEach(player => {
-      if (player.id != userinfo.id) {
-        var returnobj: any = {};
-        returnobj.payload = tableinfo;
-        returnobj.address = clientSideHandlerAddresses.tableinviteResponse;
-        returnobj.source = userinfo;
-        returnobj.description = userinfo.fullname + " just joined the Table";
-        returnobj.time = new Date().toString();
-        returnobj.id = uuid(uniqid(), uuid.DNS);
-        returnobj.reduceraction = clientSideReducerActions.playerjoinedtable;
-        var eventname = "userevent" + player.id;
-        io.emit(eventname, returnobj);
-      }
-    });
-  }
-  onClientToppedUpCredit(eventobj, io) {
-    var { tableinfo, userinfo } = eventobj;
-    var members: any[] = tableinfo.members;
-    members.forEach(player => {
-      if (player.id != userinfo.id) {
-        var returnobj: any = {};
-        returnobj.payload = tableinfo;
-        returnobj.address = clientSideHandlerAddresses.tableinviteResponse;
-        returnobj.source = userinfo;
-        returnobj.description = userinfo.fullname + " just Topped Up Credit";
-        returnobj.time = new Date().toString();
-        returnobj.id = uuid(uniqid(), uuid.DNS);
-        returnobj.reduceraction = clientSideReducerActions.playertoppedUpCredit;
-        var eventname = "userevent" + player.id;
-        io.emit(eventname, returnobj);
-      }
-    });
-  }
+
   async onFirstGameStarted(eventobj, io) {
     var gameinfo: any = await getGameInfo(eventobj.gameid);
     var playerlist: any[] = gameinfo.playerlist;

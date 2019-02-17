@@ -9,8 +9,9 @@ import { joinTable } from "../commands/registration/joinTable";
 import { topUpCredit } from "../commands/registration/topUpCredit";
 import { logIn } from "../commands/registration/loginIn";
 import { registerUser } from "../commands/registration/registerUser";
-import { getUserInfoByEmail } from "../queries/getUserInfo";
+import { getUserInfoByEmail, getUserInfo } from "../queries/getUserInfo";
 import { registerUserForNotifications } from "../utilities/pushNotificationsProvider";
+import { removePlayerFromTable } from "../commands/registration/removePlayerFromTable";
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
     let cmd = new createUser();
@@ -90,10 +91,12 @@ export class RegistrationController {
       const { userid } = req.params;
       const resultlist = await getMyTableList(userid);
       const allusers = await getAllUsersList();
+      const playerinfo = await getUserInfo(userid);
       const returnobj: any = {
         success: true,
         mytablelist: resultlist,
-        playerlist: allusers
+        playerlist: allusers,
+        playerinfo: playerinfo
       };
       res.status(200).json(returnobj);
     } catch (error) {
@@ -146,6 +149,25 @@ export class RegistrationController {
       res.status(200).json({ success: true });
     } catch (error) {
       console.log("Error Detected", error);
+      res.status(400).send(error);
+    }
+  }
+  public async removePlayerFromTable(req: Request, res: Response) {
+    try {
+      const { playertoremoveId, hostplayerid, tableid } = req.body;
+      await removePlayerFromTable(playertoremoveId, hostplayerid, tableid);
+      var tableinfo = await getTableInfo(tableid);
+      var hostplayerinfo = await getUserInfo(hostplayerid);
+      var removeplayerinfo = await getUserInfo(playertoremoveId);
+
+      res.status(200).json({
+        success: true,
+        tableinfo: tableinfo,
+        hostplayerinfo: hostplayerinfo,
+        removeplayerinfo: removeplayerinfo
+      });
+    } catch (error) {
+      console.log(error);
       res.status(400).send(error);
     }
   }
