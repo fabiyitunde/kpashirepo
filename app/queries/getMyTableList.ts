@@ -29,32 +29,36 @@ export const getMyTableList = async userid => {
     newtableinfo.isOn = tableinfo.gameison;
     newtableinfo.createOn = tableinfo.createdon;
     var playerlist: any[] = tableinfo.playerlist;
-    var filterlist = linq
-      .from(playerlist)
-      .select(player => {
-        var ret: any = { id: player.playerid };
-        return ret;
-      })
-      .toArray();
-    var playerinfolist: any[] = await KpashiPlayer.find({
-      $or: [...filterlist]
-    });
+    if (playerlist.length > 0) {
+      var filterlist = linq
+        .from(playerlist)
+        .select(player => {
+          var ret: any = { id: player.playerid };
+          return ret;
+        })
+        .toArray();
+      var playerinfolist: any[] = await KpashiPlayer.find({
+        $or: [...filterlist]
+      });
 
-    newtableinfo.membercount = playerlist.length;
-    var memberlist: any[] = [];
-    playerlist.forEach(player => {
-      var playerinfo: any = playerinfolist.find(a => a.id == player.playerid);
-      var newplayer: any = {};
-      newplayer.id = player.playerid;
-      newplayer.fullname = playerinfo.fullname;
-      newplayer.position = player.sittingposition;
-      newplayer.unitbalance = player.creditbalance;
-      newplayer.photourl = playerinfo.photourl;
-      newplayer.lastactivitytime = player.lastactivity;
-      newplayer.readytoplay = player.readytoplay;
-      memberlist.push(newplayer);
-    });
-    newtableinfo.members = [...memberlist];
+      newtableinfo.membercount = playerlist.length;
+      var memberlist: any[] = [];
+      playerlist.forEach(player => {
+        var playerinfo: any = playerinfolist.find(a => a.id == player.playerid);
+        var newplayer: any = {};
+        newplayer.id = player.playerid;
+        newplayer.fullname = playerinfo.fullname;
+        newplayer.position = player.sittingposition;
+        newplayer.unitbalance = player.creditbalance;
+        newplayer.photourl = playerinfo.photourl;
+        newplayer.lastactivitytime = player.lastactivity;
+        newplayer.readytoplay = player.readytoplay;
+        memberlist.push(newplayer);
+      });
+      newtableinfo.members = [...memberlist];
+    } else {
+      newtableinfo.members = [];
+    }
     resultlist.push(newtableinfo);
   }
   return resultlist;
