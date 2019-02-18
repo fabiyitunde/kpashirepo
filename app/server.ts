@@ -23,5 +23,12 @@ var server = app.listen(PORT, () => {
   console.log("Express server listening on port... " + PORT);
   console.log("Db Connection...connection changed", config.get("dbconstring"));
 });
-var io = socketio().listen(server);
+var io = socketio();
+io.on("connection", client => {
+  client.on("send", message => {
+    message.servertime = new Date();
+    client.emit(message.address, message);
+  });
+});
+io.listen(server);
 initHandlers(io);
