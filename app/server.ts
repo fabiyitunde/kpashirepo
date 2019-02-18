@@ -26,6 +26,7 @@ var server = app.listen(PORT, () => {
 var io = socketio();
 io.on("connection", client => {
   client.on("send", message => {
+    console.log(message);
     message.servertime = new Date();
     client.emit(message.address, message);
   });
