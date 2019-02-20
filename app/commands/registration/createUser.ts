@@ -1,5 +1,8 @@
 import * as mongoose from "mongoose";
 import { KpashiPlayer } from "../../models/kpashiPlayer";
+import { KpashiTable } from "../../domain/kpashiTable";
+import { saveKpashiTable } from "../../repositories/kpashiTableRepo";
+import { getNewGUID } from "../../utilities/newGuid";
 export class createUser {
   payload: any = {};
   isOk: boolean = false;
@@ -24,6 +27,11 @@ export class createUser {
           photourl: photourl
         });
         this.payload = await newPlayer.save();
+        var newtable: KpashiTable = new KpashiTable();
+        var tableid = getNewGUID();
+        var tablename = fullname + " kpashi Table";
+        newtable.create(tableid, userid, fullname, 2, 10, tablename);
+        await saveKpashiTable(newtable);
       } else {
         this.payload = await KpashiPlayer.findOneAndUpdate(
           { id: userid },
@@ -36,6 +44,7 @@ export class createUser {
           }
         );
       }
+
       this.isOk = true;
     } catch (error) {
       this.isOk = false;
