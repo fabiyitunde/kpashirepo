@@ -24,7 +24,8 @@ export const clientSideHandlerAddresses = {
   gameViewOpened: "gameViewOpened",
   infomation: "information",
   currentGameCancelled: "currentGameCancelled",
-  playerRemovedFromTable: "playerRemovedFromTable"
+  playerRemovedFromTable: "playerRemovedFromTable",
+  playerIsReadyToplay: "playerIsReadyToplay"
 };
 export const clientSideReducerActions = {
   playerjoinedtable: "PLAYERJOINEDTABLE",

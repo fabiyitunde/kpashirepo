@@ -44,6 +44,11 @@ export class clientSocketHandler {
         .then(() => {})
         .catch(err => {});
     });
+    channel.subscribe(postalTopics.iAmReadyToPlay, eventobj => {
+      this.onPlayerIsReadyToPlay(eventobj, io)
+        .then(() => {})
+        .catch(err => {});
+    });
   }
 
   async onFirstGameStarted(eventobj, io) {
@@ -188,6 +193,33 @@ export class clientSocketHandler {
       returnobj.time = new Date().toString();
       returnobj.id = uuid(uniqid(), uuid.DNS);
       returnobj.reduceraction = clientSideHandlerAddresses.currentGameCancelled;
+      var eventname = "userevent" + player.playerid;
+      io.emit(eventname, returnobj);
+    }
+  }
+  async onPlayerIsReadyToPlay(eventobj, io) {
+    const { tableinfo, userinfo } = eventobj;
+    var gameinfo: any = await getGameInfo(tableinfo.currentGameId);
+    var playerlist: any[] = gameinfo.playerlist;
+    for (let index = 0; index < playerlist.length; index++) {
+      const player = playerlist[index];
+      if (player.playerid == userinfo.id) continue;
+      var mygamedetails = await getMyGameDetails(
+        player.playerid,
+        tableinfo.currentGameId
+      );
+      var returnobj: any = {};
+      returnobj.gameinfo = mygamedetails;
+      returnobj.tableinfo = eventobj.tableinfo;
+      returnobj.address = clientSideHandlerAddresses.playerIsReadyToplay;
+      returnobj.source = userinfo;
+      returnobj.description =
+        eventobj.userinfo.fullname +
+        " Is Now Ready To Play " +
+        tableinfo.description;
+      returnobj.time = new Date().toString();
+      returnobj.id = uuid(uniqid(), uuid.DNS);
+      returnobj.reduceraction = clientSideHandlerAddresses.playerIsReadyToplay;
       var eventname = "userevent" + player.playerid;
       io.emit(eventname, returnobj);
     }

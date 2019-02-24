@@ -50,6 +50,7 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
     const player = playerlist[index];
     const gameresult = gameresults.find(a => a.playerid == player.playerid);
     var playerinfo: any = playerinfolist.find(a => a.id == player.playerid);
+    var tableinfoPlayer = tableinfo.members.find(a => a.id == playerinfo.id);
     var gamestatus: string = "";
     if (gameresult) gamestatus = gameresult.position == 1 ? "Winner" : "Loser";
     var playerdetail: any = {};
@@ -58,6 +59,9 @@ export const getMyGameDetails = async (userid: string, gameid: string) => {
     playerdetail.fullname = playerinfo.fullname;
     playerdetail.photourl = playerinfo.photourl;
     playerdetail.sittingposition = player.sittingposition;
+    playerdetail.readytoplay = tableinfoPlayer
+      ? tableinfoPlayer.readytoplay
+      : true;
     playerdetail.gameStatus =
       gameinfo.gamestatus == GameStatus.Finished ? gamestatus : "Indeterminate";
     playerdetail.dropedcard =
