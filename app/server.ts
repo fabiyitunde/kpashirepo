@@ -6,6 +6,10 @@ import { initHandlers } from "./eventhandlers/index";
 import { initRoutes } from "./routes/index";
 import * as socketio from "socket.io";
 import * as config from "config";
+import {
+  insertOnlineTrackerRecord,
+  deleteTrackerRecord
+} from "./models/kpashiOnlineTrackerInfo";
 const PORT = process.env.PORT || 80;
 const mongoUrl: string = "mongodb://localhost/kpashidatabase";
 
@@ -28,6 +32,12 @@ io.on("connection", client => {
   client.on("send", message => {
     message.servertime = new Date();
     io.emit(message.address, message);
+  });
+  client.on("amOnLine", userid =>
+    (async () => await insertOnlineTrackerRecord(userid, client.id))()
+  );
+  client.on("disconnect", () => {
+    (async () => await deleteTrackerRecord(client.id))();
   });
 });
 io.listen(server);
