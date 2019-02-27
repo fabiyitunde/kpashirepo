@@ -18,11 +18,16 @@ const kpashiOnlineTrackerInfo = mongoose.model(
   kpashiOnlineTrackerInfoSchema
 );
 export const insertOnlineTrackerRecord = async (userid, socketid) => {
+  var existingrec: any = await kpashiOnlineTrackerInfo.findOne({
+    socketid: socketid
+  });
+  if (existingrec != null && existingrec != undefined) return;
   var newrec = new kpashiOnlineTrackerInfo({
     socketid: socketid,
     userid: userid,
     connectiontime: new Date()
   });
+
   await newrec.save();
 };
 export const deleteTrackerRecord = async socketid => {
