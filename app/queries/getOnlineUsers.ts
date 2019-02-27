@@ -7,13 +7,11 @@ const kpashiOnlineTrackerInfo = mongoose.model(
 );
 export const getOnlineUsers = async () => {
   var resultlist: any[] = [];
-  var queryresultlist: any[] = await kpashiOnlineTrackerInfo
-    .find()
-    .populate("kpashiPlayer");
+  var queryresultlist: any[] = await kpashiOnlineTrackerInfo.find();
   if (queryresultlist == null || queryresultlist.length == 0) return resultlist;
   for (let index = 0; index < queryresultlist.length; index++) {
     const queryresult = queryresultlist[index];
-    const user = queryresult.kpashiPlayer;
+    const user: any = await KpashiPlayer.findOne({ id: queryresult.userid });
     var player: any = {};
     player.id = user.id;
     player.address = user.address;
