@@ -12,6 +12,8 @@ export const getOnlineUsers = async () => {
   for (let index = 0; index < queryresultlist.length; index++) {
     const queryresult = queryresultlist[index];
     const user: any = await KpashiPlayer.findOne({ id: queryresult.userid });
+    var existingrec = resultlist.find(a => a.id == user.id);
+    if (existingrec != null && existingrec != undefined) continue;
     var player: any = {};
     player.id = user.id;
     player.address = user.address;
