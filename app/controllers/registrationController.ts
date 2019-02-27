@@ -12,6 +12,7 @@ import { registerUser } from "../commands/registration/registerUser";
 import { getUserInfoByEmail, getUserInfo } from "../queries/getUserInfo";
 import { registerUserForNotifications } from "../utilities/pushNotificationsProvider";
 import { removePlayerFromTable } from "../commands/registration/removePlayerFromTable";
+import { getOnlineUsers } from "../queries/getOnlineUsers";
 export class RegistrationController {
   public async createuser(req: Request, res: Response) {
     let cmd = new createUser();
@@ -166,6 +167,16 @@ export class RegistrationController {
         hostplayerinfo: hostplayerinfo,
         removeplayerinfo: removeplayerinfo
       });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send(error);
+    }
+  }
+  public async getOnlineUsers(req: Request, res: Response) {
+    try {
+      const playerlist = await getOnlineUsers();
+
+      res.status(200).json(playerlist);
     } catch (error) {
       console.log(error);
       res.status(400).send(error);

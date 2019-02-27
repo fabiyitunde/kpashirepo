@@ -34,5 +34,8 @@ export class registrationRoutes {
     app
       .route("/registration/removePlayerFromTable")
       .post(this.registrationController.removePlayerFromTable);
+    app
+      .route("/registration/getOnlineUsers")
+      .get(this.registrationController.getOnlineUsers);
   }
 }

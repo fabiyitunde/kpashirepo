@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
-
-const kpashiOnlineTrackerInfoSchema = new mongoose.Schema({
+import { KpashiPlayer } from "./kpashiPlayer";
+export const kpashiOnlineTrackerInfoSchema = new mongoose.Schema({
   socketid: {
     type: String,
     required: "name is required"
@@ -11,6 +11,10 @@ const kpashiOnlineTrackerInfoSchema = new mongoose.Schema({
   },
   connectiontime: {
     type: Date
+  },
+  kpashiPlayer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "KpashiPlayer"
   }
 });
 const kpashiOnlineTrackerInfo = mongoose.model(
@@ -22,10 +26,12 @@ export const insertOnlineTrackerRecord = async (userid, socketid) => {
     socketid: socketid
   });
   if (existingrec != null && existingrec != undefined) return;
+  var playerinfo: any = await KpashiPlayer.findOne({ id: userid });
   var newrec = new kpashiOnlineTrackerInfo({
     socketid: socketid,
     userid: userid,
-    connectiontime: new Date()
+    connectiontime: new Date(),
+    kpashiPlayer: playerinfo._id
   });
 
   await newrec.save();
