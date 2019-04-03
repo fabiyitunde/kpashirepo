@@ -7,5 +7,6 @@ var GameStatus;
     GameStatus[GameStatus["DealingCards"] = 3] = "DealingCards";
     GameStatus[GameStatus["Started"] = 4] = "Started";
     GameStatus[GameStatus["Finished"] = 5] = "Finished";
+    GameStatus[GameStatus["Cancelled"] = 6] = "Cancelled";
 })(GameStatus = exports.GameStatus || (exports.GameStatus = {}));
 //# sourceMappingURL=gamestatus.js.map

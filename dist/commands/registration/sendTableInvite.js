@@ -8,11 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose = require("mongoose");
 const kpashiTableRepo_1 = require("../../repositories/kpashiTableRepo");
 const getTableInfo_1 = require("../../queries/getTableInfo");
 const getUserInfo_1 = require("../../queries/getUserInfo");
 const postal = require("postal");
+const kpashiOnlineTrackerInfo_1 = require("../../models/kpashiOnlineTrackerInfo");
 const param_1 = require("../../param");
+const kpashiOnlineTrackerInfo = mongoose.model("kpashiOnlineTrackerInfo", kpashiOnlineTrackerInfo_1.kpashiOnlineTrackerInfoSchema);
 class sendTableInvite {
     constructor(hostuserid, guestuserid, tableid) {
         this.guestuserid = guestuserid;
@@ -26,6 +29,11 @@ class sendTableInvite {
                 throw "Player Addition Not Allowed In The Middle Of A Game";
             if (kpashitable.playerAlreadyExist(this.guestuserid))
                 throw "Player Already In Group";
+            var onlinerec = yield kpashiOnlineTrackerInfo.findOne({
+                userid: this.guestuserid
+            });
+            if (onlinerec == null || onlinerec == undefined)
+                throw "this player is no more online";
             var eventobj = {};
             eventobj.tableinfo = yield getTableInfo_1.getTableInfo(this.tableid);
             eventobj.hostuserinfo = yield getUserInfo_1.getUserInfo(this.hostuserid);

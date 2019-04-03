@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const kpashiGameRepo_1 = require("../../repositories/kpashiGameRepo");
 const getUserInfo_1 = require("../../queries/getUserInfo");
+const getTableInfo_1 = require("../../queries/getTableInfo");
 const kpashiTableRepo_1 = require("../../repositories/kpashiTableRepo");
 const gameEvents_1 = require("../../domainevents/gameEvents");
 function dropCard(gameid, userid, suittype, cardtype) {
@@ -24,7 +25,8 @@ function dropCard(gameid, userid, suittype, cardtype) {
         });
         yield kpashiTableRepo_1.saveKpashiTable(table);
         yield kpashiGameRepo_1.saveKpashiGame(game);
-        gameEvents_1.raiseCardDroppedEvent(gameid, userinfo);
+        var tableinfo = yield getTableInfo_1.getTableInfo(game.kpashitableid);
+        gameEvents_1.raiseCardDroppedEvent(gameid, userinfo, tableinfo);
     });
 }
 exports.dropCard = dropCard;

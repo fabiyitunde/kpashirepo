@@ -30,7 +30,16 @@ class registrationRoutes {
         app.route("/registration/logIn").post(this.registrationController.logIn);
         app
             .route("/registration/registerUser")
-            .get(this.registrationController.registerUser);
+            .post(this.registrationController.registerUser);
+        app
+            .route("/registration/registerNotificationToken")
+            .post(this.registrationController.registerNotificationToken);
+        app
+            .route("/registration/removePlayerFromTable")
+            .post(this.registrationController.removePlayerFromTable);
+        app
+            .route("/registration/getOnlineUsers")
+            .get(this.registrationController.getOnlineUsers);
     }
 }
 exports.registrationRoutes = registrationRoutes;

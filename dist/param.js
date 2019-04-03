@@ -13,14 +13,19 @@ exports.postalTopics = {
     dealingCardsComplete: "dealingCardsComplete",
     cardDropped: "cardDropped",
     newGameStarted: "newGameStarted",
-    iAmReadyToPlay: "iAmReadyToPlay"
+    iAmReadyToPlay: "iAmReadyToPlay",
+    currentGameCancelled: "currentGameCancelled",
+    playerRemovedFromTable: "playerRemovedFromTable"
 };
 exports.clientSideHandlerAddresses = {
     tableinvite: "tableinvite",
     tableinviteResponse: "tableinviteResponse",
     tableInformationChanged: "tableInformationChanged",
     gameViewOpened: "gameViewOpened",
-    infomation: "information"
+    infomation: "information",
+    currentGameCancelled: "currentGameCancelled",
+    playerRemovedFromTable: "playerRemovedFromTable",
+    playerIsReadyToplay: "playerIsReadyToplay"
 };
 exports.clientSideReducerActions = {
     playerjoinedtable: "PLAYERJOINEDTABLE",

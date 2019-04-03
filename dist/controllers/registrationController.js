@@ -19,6 +19,9 @@ const topUpCredit_1 = require("../commands/registration/topUpCredit");
 const loginIn_1 = require("../commands/registration/loginIn");
 const registerUser_1 = require("../commands/registration/registerUser");
 const getUserInfo_1 = require("../queries/getUserInfo");
+const pushNotificationsProvider_1 = require("../utilities/pushNotificationsProvider");
+const removePlayerFromTable_1 = require("../commands/registration/removePlayerFromTable");
+const getOnlineUsers_1 = require("../queries/getOnlineUsers");
 class RegistrationController {
     createuser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -102,10 +105,12 @@ class RegistrationController {
                 const { userid } = req.params;
                 const resultlist = yield getMyTableList_1.getMyTableList(userid);
                 const allusers = yield getAllUsersList_1.getAllUsersList();
+                const playerinfo = yield getUserInfo_1.getUserInfo(userid);
                 const returnobj = {
                     success: true,
                     mytablelist: resultlist,
-                    playerlist: allusers
+                    playerlist: allusers,
+                    playerinfo: playerinfo
                 };
                 res.status(200).json(returnobj);
             }
@@ -133,9 +138,7 @@ class RegistrationController {
                 var userinfo = yield getUserInfo_1.getUserInfoByEmail(email);
                 const resultlist = yield getMyTableList_1.getMyTableList(userinfo.id);
                 const allusers = yield getAllUsersList_1.getAllUsersList();
-                res
-                    .status(200)
-                    .json({
+                res.status(200).json({
                     success: true,
                     userinfo: userinfo,
                     mytablelist: resultlist,
@@ -158,6 +161,52 @@ class RegistrationController {
             }
             catch (error) {
                 console.log("Error Detected", error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    registerNotificationToken(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userid, tokenid } = req.body;
+                yield pushNotificationsProvider_1.registerUserForNotifications(userid, tokenid);
+                res.status(200).json({ success: true });
+            }
+            catch (error) {
+                console.log("Error Detected", error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    removePlayerFromTable(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { playertoremoveId, hostplayerid, tableid } = req.body;
+                yield removePlayerFromTable_1.removePlayerFromTable(playertoremoveId, hostplayerid, tableid);
+                var tableinfo = yield getTableInfo_1.getTableInfo(tableid);
+                var hostplayerinfo = yield getUserInfo_1.getUserInfo(hostplayerid);
+                var removeplayerinfo = yield getUserInfo_1.getUserInfo(playertoremoveId);
+                res.status(200).json({
+                    success: true,
+                    tableinfo: tableinfo,
+                    hostplayerinfo: hostplayerinfo,
+                    removeplayerinfo: removeplayerinfo
+                });
+            }
+            catch (error) {
+                console.log(error);
+                res.status(400).send(error);
+            }
+        });
+    }
+    getOnlineUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const playerlist = yield getOnlineUsers_1.getOnlineUsers();
+                res.status(200).json(playerlist);
+            }
+            catch (error) {
+                console.log(error);
                 res.status(400).send(error);
             }
         });

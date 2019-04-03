@@ -45,6 +45,15 @@ class KpashiTable {
         this.playerlist.push(player);
         this.playingqueue.enqueue(playerid);
     }
+    removePlayerFromTable(playertoRemoveid, hostplayerid, balanceupdatecallback) {
+        if (this.hostplayer.playerid != hostplayerid)
+            throw "only the table host can remove a player";
+        var playertoremove = this.playerlist.find(a => a.playerid == playertoRemoveid);
+        if (playertoremove == null)
+            throw "player not found";
+        this.removeplayer(playertoRemoveid);
+        balanceupdatecallback(playertoremove.creditbalance);
+    }
     removeplayer(playerid) {
         var existingplayer = this.playerlist.find(p => p.playerid === playerid);
         if (!existingplayer || existingplayer === undefined) {
@@ -125,6 +134,8 @@ class KpashiTable {
             this.setnexttoplay();
     }
     setReadinessToPlay(playerid) {
+        if (this.gameisOn)
+            throw "game is still on";
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
         if (existingplayer == null)
             throw "player does not exist";
@@ -216,6 +227,14 @@ class KpashiTable {
         if (newgame.playerlist.length < 2)
             throw "players must be more than 1";
         return newgame;
+    }
+    cancelCurrentGame(game, userid) {
+        if (this.currentGameId != game.id)
+            throw "cannot cancel this game";
+        if (userid != this.hostplayer.playerid)
+            throw "only host can cancel games";
+        game.cancellGame();
+        this.gameisOn = false;
     }
 }
 exports.KpashiTable = KpashiTable;

@@ -14,7 +14,7 @@ class KpashiGame {
         this.deckofcards = new queue_typescript_1.Queue();
         this.openedcards = new queue_typescript_1.Queue();
         this.droppedcards = [];
-        this.firsttopick = [];
+        this.firsttopick = [null, null];
         this.pickupsequence = new queue_typescript_1.Queue();
         this.gameresults = [];
     }
@@ -78,6 +78,14 @@ class KpashiGame {
             this.playingcards.push(shuffledcards[stackposition]);
             this.deckofcards.enqueue(shuffledcards[stackposition]);
         }
+        var tempdeck = new queue_typescript_1.Queue();
+        do {
+            var currentcard = this.deckofcards.dequeue();
+            if (currentcard.cardType == 2)
+                continue;
+            tempdeck.enqueue(currentcard);
+        } while (this.deckofcards.length > 0);
+        this.deckofcards = tempdeck;
     }
     dealcards(playerid) {
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
@@ -116,6 +124,8 @@ class KpashiGame {
         this.lastplayerposition = existingplayer.sittingposition;
     }
     dropcard(playerid, suittype, cardtype, onGameEndCallback) {
+        if (this.gamestatus == gamestatus_1.GameStatus.Cancelled)
+            throw "Game Already Cancelled";
         if (this.gamestatus == gamestatus_1.GameStatus.Finished)
             throw "Game Already Ended";
         var existingplayer = this.playerlist.find(a => a.playerid == playerid);
@@ -139,20 +149,20 @@ class KpashiGame {
     }
     registerdroppedcard(player, card) {
         this.droppedcards.push([player, card]);
-        if (this.firsttopick[1].cardType == cardType_1.CardType.Ace)
-            return;
-        for (let index = 0; index < this.droppedcards.length; index++) {
-            const dropedcarddetail = this.droppedcards[index];
-            if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
-                continue;
-            if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
-                continue;
-            if (dropedcarddetail[1].cardType == cardType_1.CardType.Ace) {
-                this.firsttopick = dropedcarddetail;
-            }
-            else {
-                if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
+        if (this.firsttopick[1].cardType != cardType_1.CardType.Ace) {
+            for (let index = 0; index < this.droppedcards.length; index++) {
+                const dropedcarddetail = this.droppedcards[index];
+                if (this.firsttopick[0].playerid == dropedcarddetail[0].playerid)
+                    continue;
+                if (this.firsttopick[1].suitType != dropedcarddetail[1].suitType)
+                    continue;
+                if (dropedcarddetail[1].cardType == 1) {
                     this.firsttopick = dropedcarddetail;
+                }
+                else {
+                    if (this.firsttopick[1].cardType < dropedcarddetail[1].cardType)
+                        this.firsttopick = dropedcarddetail;
+                }
             }
         }
         this.processpicksequence();
@@ -182,7 +192,7 @@ class KpashiGame {
             var continuepicking = true;
             if (this.openedcards.length == 0)
                 continue;
-            var nosOfAces = playertoupdate.cards.filter(a => a.cardType === cardType_1.CardType.Ace).length;
+            var nosOfAces = playertoupdate.cards.filter(a => a.cardType == 1).length;
             if (nosOfAces == 2)
                 continue;
             while (this.openedcards.length > 0 && continuepicking) {
@@ -190,7 +200,7 @@ class KpashiGame {
                 var assumedcardlist = [...playertoupdate.cards, cardontop];
                 let totalscore = 0;
                 assumedcardlist.forEach(card => {
-                    var cardpoint = card.cardType == cardType_1.CardType.Ace ? 11 : card.cardType;
+                    var cardpoint = card.cardType == 1 ? 11 : card.cardType;
                     totalscore += cardpoint;
                 });
                 if (totalscore <= 21) {
@@ -241,6 +251,11 @@ class KpashiGame {
             ? this.lastplayerposition
             : this.lastplayerposition + 1;
         return this.playerlist.find(a => a.sittingposition == nextplayerposition);
+    }
+    cancellGame() {
+        if (this.gamestatus != gamestatus_1.GameStatus.Started)
+            throw "only started games can be cancelled";
+        this.gamestatus = gamestatus_1.GameStatus.Cancelled;
     }
 }
 exports.KpashiGame = KpashiGame;

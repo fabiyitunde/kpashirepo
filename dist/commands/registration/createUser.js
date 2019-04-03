@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const kpashiPlayer_1 = require("../../models/kpashiPlayer");
+const kpashiTable_1 = require("../../domain/kpashiTable");
+const kpashiTableRepo_1 = require("../../repositories/kpashiTableRepo");
+const newGuid_1 = require("../../utilities/newGuid");
 class createUser {
     constructor() {
         this.payload = {};
@@ -29,6 +32,11 @@ class createUser {
                         photourl: photourl
                     });
                     this.payload = yield newPlayer.save();
+                    var newtable = new kpashiTable_1.KpashiTable();
+                    var tableid = newGuid_1.getNewGUID();
+                    var tablename = fullname + " kpashi Table";
+                    newtable.create(tableid, userid, fullname, 2, 10, tablename);
+                    yield kpashiTableRepo_1.saveKpashiTable(newtable);
                 }
                 else {
                     this.payload = yield kpashiPlayer_1.KpashiPlayer.findOneAndUpdate({ id: userid }, {

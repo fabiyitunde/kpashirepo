@@ -29,6 +29,9 @@ exports.KpashiPlayer = mongoose.model("KpashiPlayer", new mongoose.Schema({
     lastactivitytime: {
         type: Date,
         default: Date.now
+    },
+    availablecredit: {
+        type: Number
     }
 }));
 exports.KpashiPlayer = exports.KpashiPlayer;

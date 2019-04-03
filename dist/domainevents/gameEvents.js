@@ -31,10 +31,11 @@ exports.raiseDealingCardsCompleteEndedEvent = (gameid, userinfo) => {
     const channel = postal.channel(param_1.postalChannels.kpashiChannel);
     channel.publish(param_1.postalTopics.dealingCardsComplete, eventobj);
 };
-exports.raiseCardDroppedEvent = (gameid, userinfo) => {
+exports.raiseCardDroppedEvent = (gameid, userinfo, tableinfo) => {
     var eventobj = {};
     eventobj.gameid = gameid;
     eventobj.userinfo = userinfo;
+    eventobj.tableinfo = tableinfo;
     const channel = postal.channel(param_1.postalChannels.kpashiChannel);
     channel.publish(param_1.postalTopics.cardDropped, eventobj);
 };
@@ -50,6 +51,14 @@ exports.raiseIAmReadyToPlayEvent = (tableinfo, userinfo) => __awaiter(this, void
     eventobj.tableinfo = tableinfo;
     eventobj.userinfo = userinfo;
     const channel = postal.channel(param_1.postalChannels.kpashiChannel);
-    channel.publish(param_1.postalTopics.newGameStarted, eventobj);
+    channel.publish(param_1.postalTopics.iAmReadyToPlay, eventobj);
 });
+exports.raiseCurrentGameCancelledEvent = (tableinfo, userinfo, gameid) => {
+    var eventobj = {};
+    eventobj.tableinfo = tableinfo;
+    eventobj.userinfo = userinfo;
+    eventobj.gameid = gameid;
+    const channel = postal.channel(param_1.postalChannels.kpashiChannel);
+    channel.publish(param_1.postalTopics.currentGameCancelled, eventobj);
+};
 //# sourceMappingURL=gameEvents.js.map

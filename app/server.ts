@@ -14,7 +14,8 @@ const PORT = process.env.PORT || 80;
 const mongoUrl: string = "mongodb://localhost/kpashidatabase";
 
 var app = express();
-app.use(cors({ credentials: true, origin: config.get("clientaddress") }));
+//app.use(cors({ credentials: true, origin: config.get("clientaddress") }));
+app.use(cors());
 // initHandlers(this.app);
 app.use(bodyParser.json());
 //support application/x-www-form-urlencoded post data

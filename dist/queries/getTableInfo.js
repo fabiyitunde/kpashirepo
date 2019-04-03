@@ -29,31 +29,36 @@ exports.getTableInfo = (tableid) => __awaiter(this, void 0, void 0, function* ()
     newtableinfo.isOn = tableinfo.gameison;
     newtableinfo.createOn = tableinfo.createdon;
     var playerlist = tableinfo.playerlist;
-    var filterlist = linq
-        .from(playerlist)
-        .select(player => {
-        var ret = { id: player.playerid };
-        return ret;
-    })
-        .toArray();
-    var playerinfolist = yield kpashiPlayer_1.KpashiPlayer.find({
-        $or: [...filterlist]
-    });
-    newtableinfo.membercount = playerlist.length;
-    var memberlist = [];
-    playerlist.forEach((player) => __awaiter(this, void 0, void 0, function* () {
-        var playerinfo = playerinfolist.find(a => a.id == player.playerid);
-        var newplayer = {};
-        newplayer.id = player.playerid;
-        newplayer.fullname = playerinfo.fullname;
-        newplayer.position = player.sittingposition;
-        newplayer.unitbalance = player.creditbalance;
-        newplayer.photourl = playerinfo.photourl;
-        newplayer.lastactivitytime = playerinfo.lastactivitytime;
-        newplayer.readytoplay = playerinfo.readytoplay;
-        memberlist.push(newplayer);
-    }));
-    newtableinfo.members = memberlist;
+    if (playerlist.length > 0) {
+        var filterlist = linq
+            .from(playerlist)
+            .select(player => {
+            var ret = { id: player.playerid };
+            return ret;
+        })
+            .toArray();
+        var playerinfolist = yield kpashiPlayer_1.KpashiPlayer.find({
+            $or: [...filterlist]
+        });
+        newtableinfo.membercount = playerlist.length;
+        var memberlist = [];
+        playerlist.forEach((player) => __awaiter(this, void 0, void 0, function* () {
+            var playerinfo = playerinfolist.find(a => a.id == player.playerid);
+            var newplayer = {};
+            newplayer.id = player.playerid;
+            newplayer.fullname = playerinfo.fullname;
+            newplayer.position = player.sittingposition;
+            newplayer.unitbalance = player.creditbalance;
+            newplayer.photourl = playerinfo.photourl;
+            newplayer.lastactivitytime = playerinfo.lastactivitytime;
+            newplayer.readytoplay = player.readytoplay;
+            memberlist.push(newplayer);
+        }));
+        newtableinfo.members = memberlist;
+    }
+    else {
+        newtableinfo.members = [];
+    }
     return newtableinfo;
 });
 //# sourceMappingURL=getTableInfo.js.map

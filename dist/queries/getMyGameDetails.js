@@ -57,6 +57,7 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         const player = playerlist[index];
         const gameresult = gameresults.find(a => a.playerid == player.playerid);
         var playerinfo = playerinfolist.find(a => a.id == player.playerid);
+        var tableinfoPlayer = tableinfo.members.find(a => a.id == playerinfo.id);
         var gamestatus = "";
         if (gameresult)
             gamestatus = gameresult.position == 1 ? "Winner" : "Loser";
@@ -66,15 +67,20 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         playerdetail.fullname = playerinfo.fullname;
         playerdetail.photourl = playerinfo.photourl;
         playerdetail.sittingposition = player.sittingposition;
+        playerdetail.readytoplay = tableinfoPlayer
+            ? tableinfoPlayer.readytoplay
+            : true;
         playerdetail.gameStatus =
             gameinfo.gamestatus == gamestatus_1.GameStatus.Finished ? gamestatus : "Indeterminate";
         playerdetail.dropedcard =
             dropedcard == null
                 ? null
                 : { suittype: dropedcard.suittype, cardtype: dropedcard.cardtype };
-        if (gameinfo.gamestatus == gamestatus_1.GameStatus.Finished) {
+        if (gameinfo.gamestatus == gamestatus_1.GameStatus.Finished ||
+            gameinfo.gamestatus == gamestatus_1.GameStatus.Cancelled) {
             playerdetail.cards = player.cards;
-            playerdetail.score = gameresult.score;
+            playerdetail.score =
+                gameinfo.gamestatus == gamestatus_1.GameStatus.Finished ? gameresult.score : 0;
         }
         else {
             playerdetail.cards = null;
@@ -94,11 +100,13 @@ exports.getMyGameDetails = (userid, gameid) => __awaiter(this, void 0, void 0, f
         currentplayercards == null || currentplayercards.length == 0
             ? []
             : currentplayercards;
-    gamedetails.readytoplay = true;
-    var tableinfoplayerlist = tableinfo.playerlist;
-    var readytoplayPlayerRec = tableinfoplayerlist.find(a => a.playerid == userid);
+    gamedetails.readytoplay = "true";
+    var tableinfoplayerlist = tableinfo.members;
+    var readytoplayPlayerRec = tableinfoplayerlist.find(a => a.id == userid);
     if (readytoplayPlayerRec)
-        gamedetails.readytoplay = readytoplayPlayerRec.readytoplay;
+        gamedetails.readytoplay = readytoplayPlayerRec.readytoplay
+            ? "true"
+            : "false";
     return gamedetails;
 });
 //# sourceMappingURL=getMyGameDetails.js.map
